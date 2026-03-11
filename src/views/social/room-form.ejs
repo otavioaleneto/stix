@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Editar Sala</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="mb-6">
+        <a href="/social/rooms" class="text-sm text-gray-400 hover:text-white transition-colors">&larr; Voltar para Salas</a>
+        <h1 class="text-2xl font-bold text-white mt-2">Editar Sala</h1>
+      </div>
+
+      <form action="/social/rooms/<%= room.id %>" method="POST" class="max-w-2xl">
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Titulo</label>
+            <input type="text" name="title" value="<%= room.title %>" required class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Jogo</label>
+            <input type="text" name="game_title" value="<%= room.game_title || '' %>" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+              <select name="status" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+                <option value="scheduled" <%= room.status === 'scheduled' ? 'selected' : '' %>>Agendada</option>
+                <option value="active" <%= room.status === 'active' ? 'selected' : '' %>>Ativa</option>
+                <option value="finished" <%= room.status === 'finished' ? 'selected' : '' %>>Finalizada</option>
+                <option value="cancelled" <%= room.status === 'cancelled' ? 'selected' : '' %>>Cancelada</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Max Jogadores</label>
+              <input type="number" name="max_players" value="<%= room.max_players %>" min="2" max="16" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Visibilidade</label>
+              <select name="is_public" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+                <option value="true" <%= room.is_public ? 'selected' : '' %>>Publica</option>
+                <option value="false" <%= !room.is_public ? 'selected' : '' %>>Privada</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Data Agendada</label>
+              <input type="datetime-local" name="scheduled_at" value="<%= room.scheduled_at ? new Date(room.scheduled_at).toISOString().slice(0,16) : '' %>" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Criador</label>
+            <p class="text-sm text-gray-400"><%= room.creator ? (room.creator.display_name || room.creator.username) : 'Desconhecido' %></p>
+          </div>
+        </div>
+
+        <% if (room.participants && room.participants.length > 0) { %>
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6 mt-4">
+          <h3 class="text-sm font-medium text-gray-300 mb-3">Participantes (<%= room.participants.length %>)</h3>
+          <div class="space-y-2">
+            <% room.participants.forEach(function(p) { %>
+            <div class="flex items-center justify-between py-1">
+              <div class="flex items-center gap-2">
+                <% var up = p.userProfile || {}; %>
+                <% if (up.avatar_url) { %>
+                <img src="<%= up.avatar_url %>" class="w-6 h-6 rounded-full" alt="">
+                <% } else { %>
+                <div class="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white"><%= ((up.display_name || up.username || '?')[0] || '?').toUpperCase() %></div>
+                <% } %>
+                <span class="text-sm text-white"><%= up.display_name || up.username || 'Desconhecido' %></span>
+              </div>
+              <span class="text-xs px-2 py-0.5 rounded-full <%= p.status === 'joined' || p.status === 'confirmed' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400' %>"><%= p.status %></span>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <div class="mt-6 flex gap-3">
+          <button type="submit" class="rounded-lg bg-brand-600 px-6 py-2 text-sm font-medium text-white hover:bg-brand-500 transition-colors">Salvar</button>
+          <a href="/social/rooms" class="rounded-lg bg-gray-700 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">Cancelar</a>
+        </div>
+      </form>
+    </main>
+  </div>
+</body>
+</html>

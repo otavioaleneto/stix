@@ -1,0 +1,25 @@
+[dotenv@17.3.1] injecting env (0) from .env [2m-- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`[0m
+[GODSend] Starting up...
+[GODSend] Node.js v20.20.0
+[GODSend] Working directory: /home/runner/workspace
+[STARTUP] .env file: NOT FOUND - using environment variables or defaults
+[STARTUP] Copy .env.example to .env and configure your database
+[STARTUP] DB config: {
+  DATABASE_URL: [32m'(set)'[39m,
+  DB_DIALECT: [32m'(default: mysql)'[39m,
+  DB_HOST: [32m'(default: localhost)'[39m,
+  DB_PORT: [32m'(default)'[39m,
+  DB_NAME: [32m'(default: godsend)'[39m,
+  DB_USER: [32m'(default: root)'[39m,
+  DB_PASS: [32m'(empty)'[39m,
+  API_OPEN_ACCESS: [32m'true'[39m,
+  FORCE_HTTPS: [32m'false'[39m,
+  SESSION_SECRET: [32m'(set)'[39m
+}
+[DB] Using DATABASE_URL connection string
+[DB] Connection established successfully.
+[DB] Models synchronized.
+[STARTUP] Database: OK
+[STARTUP] Session store: OK
+[GODSend] Server running on http://0.0.0.0:5000
+[GODSend] System is installed. Login at /login

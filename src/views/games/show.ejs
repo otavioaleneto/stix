@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - <%= game.title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+
+      <div class="mb-6 flex items-center justify-between">
+        <a href="/games" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
+          Voltar
+        </a>
+        <div class="flex gap-2">
+          <a href="/games/<%= game.id %>/edit" class="inline-flex items-center gap-1 rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition-colors">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+            Editar
+          </a>
+          <form action="/games/<%= game.id %>/delete" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este game?')">
+            <button type="submit" class="inline-flex items-center gap-1 rounded-lg bg-red-600/20 px-4 py-2 text-sm font-medium text-red-400 hover:bg-red-600/30 transition-colors">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+              Excluir
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-1">
+          <div class="rounded-xl bg-gray-800 border border-gray-700 overflow-hidden">
+            <div class="aspect-[3/4] bg-gray-700">
+              <% if (game.cover_image) { %>
+              <img src="<%= game.cover_image %>" alt="<%= game.title %>" class="h-full w-full object-cover">
+              <% } else { %>
+              <div class="h-full w-full flex items-center justify-center">
+                <svg class="h-20 w-20 text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H3.75A2.25 2.25 0 001.5 6.75v10.5A2.25 2.25 0 003.75 21z" /></svg>
+              </div>
+              <% } %>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-6">
+          <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+            <div class="flex items-start justify-between mb-4">
+              <h2 class="text-xl font-bold text-white"><%= game.title %></h2>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1 rounded-full bg-yellow-500/10 px-2.5 py-1 text-xs font-medium text-yellow-400" title="<%= totalVotes %> voto(s)">
+                  <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <%= avgRating > 0 ? avgRating : '-' %> (<%= totalVotes %>)
+                </span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-400">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+                  <%= downloadCount %> downloads
+                </span>
+                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium <%= game.status === 'active' ? 'bg-green-500/10 text-green-400' : game.status === 'standby' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-gray-500/10 text-gray-400' %>">
+                  <%= game.status === 'active' ? 'Ativo' : game.status === 'standby' ? 'Standby' : 'Inativo' %>
+                </span>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p class="text-gray-400">Plataforma</p>
+                <p class="text-white capitalize"><%= game.platform.replace('_', ' ') %></p>
+              </div>
+              <div>
+                <p class="text-gray-400">Produtora</p>
+                <p class="text-white"><%= game.publisher || 'N/A' %></p>
+              </div>
+              <div>
+                <p class="text-gray-400">Data de Lançamento</p>
+                <p class="text-white"><%= game.release_date || 'N/A' %></p>
+              </div>
+              <div>
+                <p class="text-gray-400">Cadastrado em</p>
+                <p class="text-white"><%= formatDate(game.created_at) %></p>
+              </div>
+            </div>
+            <% if (game.categoryLabels && game.categoryLabels.length > 0) { %>
+            <div class="mt-4 pt-4 border-t border-gray-700">
+              <p class="text-gray-400 text-sm mb-2">Categorias</p>
+              <div class="flex flex-wrap gap-2">
+                <% game.categoryLabels.forEach(function(label) { %>
+                <span class="inline-flex items-center rounded-full bg-brand-500/10 px-2.5 py-1 text-xs font-medium text-brand-400 border border-brand-500/20"><%= label %></span>
+                <% }) %>
+              </div>
+            </div>
+            <% } %>
+            <% if (game.description) { %>
+            <div class="mt-4 pt-4 border-t border-gray-700">
+              <p class="text-sm text-gray-300"><%= game.description %></p>
+            </div>
+            <% } %>
+          </div>
+
+          <% if (game.youtube_trailer_url) { %>
+          <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+            <h3 class="text-sm font-medium text-white mb-3">Trailer</h3>
+            <% const videoId = game.youtube_trailer_url.match(/(?:v=|\/)([\w-]{11})/); %>
+            <% if (videoId) { %>
+            <div class="aspect-video rounded-lg overflow-hidden">
+              <iframe src="https://www.youtube.com/embed/<%= videoId[1] %>" class="h-full w-full" allowfullscreen></iframe>
+            </div>
+            <% } else { %>
+            <a href="<%= game.youtube_trailer_url %>" target="_blank" class="text-sm text-brand-400 hover:text-brand-300"><%= game.youtube_trailer_url %></a>
+            <% } %>
+          </div>
+          <% } %>
+
+          <div class="rounded-xl bg-gray-800 border border-gray-700">
+            <div class="px-6 py-4 border-b border-gray-700">
+              <h3 class="text-sm font-medium text-white">Arquivos (<%= game.files ? game.files.length : 0 %>)</h3>
+            </div>
+            <% if (game.files && game.files.length > 0) { %>
+            <div class="divide-y divide-gray-700">
+              <% game.files.forEach(file => { %>
+              <div class="px-6 py-3">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium
+                    <%= file.file_type === 'game' ? 'bg-blue-500/10 text-blue-400' : '' %>
+                    <%= file.file_type === 'dlc' ? 'bg-purple-500/10 text-purple-400' : '' %>
+                    <%= file.file_type === 'tu' ? 'bg-yellow-500/10 text-yellow-400' : '' %>
+                    <%= file.file_type === 'translation' ? 'bg-pink-500/10 text-pink-400' : '' %>
+                  ">
+                    <%= file.file_type === 'game' ? 'Jogo' : '' %>
+                    <%= file.file_type === 'dlc' ? 'DLC' : '' %>
+                    <%= file.file_type === 'tu' ? 'TU' : '' %>
+                    <%= file.file_type === 'translation' ? 'Tradução' : '' %>
+                  </span>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-white"><%= file.label %></p>
+                    <p class="text-xs text-gray-400 truncate">Server: <%= file.server_path %></p>
+                    <% if (file.folder_path) { %>
+                    <p class="text-xs text-gray-400 truncate">Console: <%= file.folder_path %></p>
+                    <% } %>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <% if (file.title_id) { %>
+                    <span class="text-xs text-gray-500 font-mono"><%= file.title_id %></span>
+                    <% } %>
+                    <button onclick="browseFile(<%= file.id %>)" class="inline-flex items-center rounded-md bg-gray-700 px-2 py-1 text-xs font-medium text-gray-300 hover:bg-gray-600 transition-colors" title="Browse WebDAV path">
+                      Browse
+                    </button>
+                    <a href="/api/download/<%= file.id %>" class="inline-flex items-center rounded-md bg-brand-600 px-2 py-1 text-xs font-medium text-white hover:bg-brand-500 transition-colors" title="Test download in browser">
+                      Download
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            <% } else { %>
+            <div class="px-6 py-8 text-center text-gray-400 text-sm">Nenhum arquivo cadastrado.</div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 rounded-xl bg-gray-800 border border-gray-700">
+        <div class="px-6 py-4 border-b border-gray-700">
+          <h3 class="text-sm font-medium text-white flex items-center gap-2">
+            <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+            Comentários
+            <span class="text-xs text-gray-500">(<%= comments ? comments.length : 0 %>)</span>
+          </h3>
+        </div>
+        <div class="px-6 py-4">
+          <% if (comments && comments.length > 0) { %>
+          <div class="space-y-4 max-h-96 overflow-y-auto">
+            <% comments.forEach(function(c) { %>
+            <div class="flex gap-3 p-3 rounded-lg bg-gray-700/50">
+              <div class="flex-shrink-0">
+                <% if (c.userProfile && c.userProfile.avatar_url) { %>
+                <img src="<%= c.userProfile.avatar_url %>" alt="" class="h-8 w-8 rounded-full object-cover">
+                <% } else { %>
+                <div class="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
+                  <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                </div>
+                <% } %>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-sm font-medium text-white"><%= c.userProfile ? (c.userProfile.display_name || c.userProfile.username) : 'Usuário' %></span>
+                  <span class="text-xs text-gray-500"><%= c.created_at ? new Date(c.created_at).toLocaleDateString('pt-BR') + ' ' + new Date(c.created_at).toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}) : '' %></span>
+                </div>
+                <p class="text-sm text-gray-300 whitespace-pre-wrap break-words"><%= c.comment_text %></p>
+              </div>
+              <form action="/games/<%= game.id %>/comments/<%= c.id %>/delete" method="POST" onsubmit="return confirm('Excluir este comentário?')" class="flex-shrink-0">
+                <button type="submit" class="text-gray-500 hover:text-red-400 transition-colors" title="Excluir">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+                </button>
+              </form>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %>
+          <p class="text-gray-400 text-sm text-center py-4">Nenhum comentário neste jogo.</p>
+          <% } %>
+        </div>
+      </div>
+
+      <script>
+      function browseFile(fileId) {
+        document.getElementById('browseModal').classList.remove('hidden');
+        document.getElementById('browseContent').innerHTML = '<p class="text-gray-400 text-sm">Loading...</p>';
+        fetch('/api/browse-file/' + fileId)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (!data.success) {
+              document.getElementById('browseContent').innerHTML = '<p class="text-red-400 text-sm">Error: ' + data.error + '</p>';
+              return;
+            }
+            document.getElementById('browseTitle').textContent = 'Path: ' + data.path;
+            var html = '';
+            if (data.is_directory) {
+              html += '<p class="text-xs text-gray-500 mb-3">Directory contains ' + data.files.length + ' item(s)</p>';
+            }
+            data.files.forEach(function(f) {
+              var icon = f.type === 'directory' ? '&#128193;' : '&#128196;';
+              var size = f.size ? ' (' + formatBytesShow(f.size) + ')' : '';
+              html += '<div class="py-2 border-b border-gray-700 last:border-0">';
+              html += '<div class="flex items-center gap-2">';
+              html += '<span>' + icon + '</span>';
+              html += '<div class="flex-1 min-w-0">';
+              html += '<p class="text-sm text-white truncate">' + f.basename + size + '</p>';
+              html += '<p class="text-xs text-gray-500 truncate">' + f.filename + '</p>';
+              html += '</div>';
+              html += '</div></div>';
+            });
+            if (data.files.length === 0) {
+              html = '<p class="text-gray-400 text-sm">No files found in this path.</p>';
+            }
+            document.getElementById('browseContent').innerHTML = html;
+          })
+          .catch(function(err) {
+            document.getElementById('browseContent').innerHTML = '<p class="text-red-400 text-sm">Error: ' + err.message + '</p>';
+          });
+      }
+      function closeBrowse() {
+        document.getElementById('browseModal').classList.add('hidden');
+      }
+      function formatBytesShow(bytes) {
+        if (bytes >= 1073741824) return (bytes / 1073741824).toFixed(2) + ' GB';
+        if (bytes >= 1048576) return (bytes / 1048576).toFixed(2) + ' MB';
+        return (bytes / 1024).toFixed(2) + ' KB';
+      }
+      </script>
+
+      <div id="browseModal" class="hidden fixed inset-0 z-50 overflow-y-auto" onclick="if(event.target===this)closeBrowse()">
+        <div class="flex min-h-full items-center justify-center p-4">
+          <div class="w-full max-w-lg rounded-xl bg-gray-800 border border-gray-700 shadow-xl">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+              <h3 class="text-sm font-medium text-white" id="browseTitle">WebDAV Files</h3>
+              <button onclick="closeBrowse()" class="text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="browseContent" class="px-6 py-4 max-h-96 overflow-y-auto">
+              <p class="text-gray-400 text-sm">Loading...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</body>
+</html>

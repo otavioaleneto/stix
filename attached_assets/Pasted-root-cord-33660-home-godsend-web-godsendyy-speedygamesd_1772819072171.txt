@@ -1,0 +1,41 @@
+root@cord-33660:/home/godsend/web/godsendyy.speedygamesdownloads.com/public_html# cat /home/godsend/conf/web/godsendyy.speedygamesdownloads.com/apache2.conf
+#=========================================================================#
+# Default Web Domain Template                                             #
+# DO NOT MODIFY THIS FILE! CHANGES WILL BE LOST WHEN REBUILDING DOMAINS   #
+# https://hestiacp.com/docs/server-administration/web-templates.html      #
+#=========================================================================#
+
+<VirtualHost 148.224.62.220:8080>
+
+    ServerName godsendyy.speedygamesdownloads.com
+
+    ServerAdmin info@godsendyy.speedygamesdownloads.com
+    DocumentRoot /home/godsend/web/godsendyy.speedygamesdownloads.com/public_html
+    ScriptAlias /cgi-bin/ /home/godsend/web/godsendyy.speedygamesdownloads.com/cgi-bin/
+    Alias /vstats/ /home/godsend/web/godsendyy.speedygamesdownloads.com/stats/
+    Alias /error/ /home/godsend/web/godsendyy.speedygamesdownloads.com/document_errors/
+    #SuexecUserGroup godsend godsend
+    CustomLog /var/log/apache2/domains/godsendyy.speedygamesdownloads.com.bytes bytes
+    CustomLog /var/log/apache2/domains/godsendyy.speedygamesdownloads.com.log combined
+    ErrorLog /var/log/apache2/domains/godsendyy.speedygamesdownloads.com.error.log
+
+    IncludeOptional /home/godsend/conf/web/godsendyy.speedygamesdownloads.com/apache2.forcessl.conf*
+
+    <Directory /home/godsend/web/godsendyy.speedygamesdownloads.com/stats>
+        AllowOverride All
+    </Directory>
+    <Directory /home/godsend/web/godsendyy.speedygamesdownloads.com/public_html>
+        AllowOverride All
+        Options +Includes -Indexes +ExecCGI
+    </Directory>
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php8.3-fpm-godsendyy.speedygamesdownloads.com.sock|fcgi://localhost"
+    </FilesMatch>
+    SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
+
+    IncludeOptional /home/godsend/conf/web/godsendyy.speedygamesdownloads.com/apache2.conf_*
+    IncludeOptional /etc/apache2/conf.d/*.inc
+</VirtualHost>
+root@cord-33660:/home/godsend/web/godsendyy.speedygamesdownloads.com/public_html# curl -s -o /dev/null -w "%{http_code}" http://148.224.62.220:8080/
+200root@cord-33660:/home/godsend/web/godsendyy.speedygamesdownloads.com/public_html#

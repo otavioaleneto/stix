@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Usuarios</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center gap-1.5 text-sm">
+            <span class="h-2 w-2 rounded-full <%= wpStatus === 'connected' ? 'bg-green-400' : wpStatus === 'error' ? 'bg-red-400' : 'bg-gray-400' %>"></span>
+            <span class="text-gray-400">WordPress: <%= wpStatus === 'connected' ? 'Conectado' : wpStatus === 'error' ? 'Erro' : 'Nao configurado' %></span>
+          </span>
+          <% if (wpStatus === 'connected' && source) { %>
+          <span class="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400"><%= source %></span>
+          <% } %>
+        </div>
+        <a href="/users?refresh=true&limit=<%= limit %>" class="inline-flex items-center gap-2 rounded-lg bg-gray-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-600 transition-colors">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" /></svg>
+          Atualizar
+        </a>
+      </div>
+
+      <% if (wpStatus !== 'connected' && members.length === 0) { %>
+      <div class="rounded-xl bg-gray-800 border border-gray-700 p-12 text-center">
+        <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+        <h3 class="mt-4 text-sm font-semibold text-white">Sem conexao com WordPress</h3>
+        <p class="mt-2 text-sm text-gray-400"><%= message %></p>
+        <a href="/settings" class="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">Configurar WordPress</a>
+      </div>
+      <% } else { %>
+
+      <form method="GET" action="/users" class="flex flex-col sm:flex-row gap-3 mb-6">
+        <input type="text" name="search" value="<%= search %>" placeholder="Buscar por nome, email ou username..."
+          class="flex-1 rounded-lg border-0 bg-gray-800 px-4 py-2.5 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 border border-gray-700">
+        <input type="hidden" name="limit" value="<%= limit %>">
+        <input type="hidden" name="sort" value="<%= sort %>">
+        <button type="submit" class="rounded-lg bg-gray-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-600 transition-colors">Buscar</button>
+        <% if (search) { %>
+        <a href="/users?limit=<%= limit %>&sort=<%= sort %>" class="rounded-lg bg-gray-800 border border-gray-700 px-4 py-2.5 text-sm font-medium text-gray-400 hover:text-white transition-colors text-center">Limpar</a>
+        <% } %>
+      </form>
+
+      <div class="rounded-xl bg-gray-800 border border-gray-700 overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div>
+            <p class="text-sm text-gray-400">
+              <% if (search) { %>
+                <%= totalMembers %> resultado(s) de <%= totalAll %> usuarios
+              <% } else { %>
+                <%= totalMembers %> usuarios encontrados
+              <% } %>
+            </p>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-400">Ordenar:</span>
+              <select id="sort-select" class="rounded-lg border-0 bg-gray-700 px-3 py-1.5 text-sm text-white focus:ring-2 focus:ring-brand-500">
+                <option value="" <%= !sort ? 'selected' : '' %>>Padrao</option>
+                <option value="level_asc" <%= sort === 'level_asc' ? 'selected' : '' %>>Nivel (crescente)</option>
+                <option value="level_desc" <%= sort === 'level_desc' ? 'selected' : '' %>>Nivel (decrescente)</option>
+                <option value="name_asc" <%= sort === 'name_asc' ? 'selected' : '' %>>Nome (A-Z)</option>
+                <option value="name_desc" <%= sort === 'name_desc' ? 'selected' : '' %>>Nome (Z-A)</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-sm text-gray-400">Por pagina:</span>
+              <% [15, 30, 50].forEach(function(val) { %>
+              <a href="/users?limit=<%= val %>&page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sort ? '&sort=' + sort : '' %>"
+                class="rounded-lg px-3 py-1.5 text-sm font-medium transition-colors <%= val === limit ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700' %>">
+                <%= val %>
+              </a>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-gray-800/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Usuario</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <a href="/users?limit=<%= limit %>&page=1<%= search ? '&search=' + encodeURIComponent(search) : '' %>&sort=<%= sort === 'level_asc' ? 'level_desc' : 'level_asc' %>"
+                    class="inline-flex items-center gap-1 hover:text-white transition-colors">
+                    Nivel
+                    <% if (sort === 'level_asc') { %>
+                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
+                    <% } else if (sort === 'level_desc') { %>
+                    <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                    <% } else { %>
+                    <svg class="h-3 w-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" /></svg>
+                    <% } %>
+                  </a>
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Último Acesso</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700">
+              <% if (members.length === 0) { %>
+              <tr>
+                <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-400">
+                  <% if (search) { %>
+                    Nenhum usuario encontrado para "<%= search %>"
+                  <% } else { %>
+                    Nenhum usuario encontrado.
+                  <% } %>
+                </td>
+              </tr>
+              <% } %>
+              <% members.forEach(function(member) { %>
+              <tr class="hover:bg-gray-700/30">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-3">
+                    <div class="h-8 w-8 rounded-full bg-purple-600/20 flex items-center justify-center">
+                      <span class="text-xs font-medium text-purple-400"><%= (member.name || member.username || '?').charAt(0).toUpperCase() %></span>
+                    </div>
+                    <div>
+                      <p class="text-sm font-medium text-white"><%= member.name || member.username || 'N/A' %></p>
+                      <% if (member.username && member.name && member.username !== member.name) { %>
+                      <p class="text-xs text-gray-500">@<%= member.username %></p>
+                      <% } %>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300"><%= member.email || 'N/A' %></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% var levelDisplay = 'N/A'; %>
+                  <% if (member.membership_level) { %>
+                    <% if (typeof member.membership_level === 'object') { %>
+                      <% levelDisplay = member.membership_level.name || member.membership_level.Name || JSON.stringify(member.membership_level); %>
+                    <% } else { %>
+                      <% levelDisplay = String(member.membership_level); %>
+                    <% } %>
+                  <% } %>
+                  <% if (member.level_id) { %>
+                  <span class="inline-flex items-center rounded-full bg-purple-500/10 px-2.5 py-0.5 text-xs font-medium text-purple-400">
+                    Lv.<%= member.level_id %> - <%= levelDisplay %>
+                  </span>
+                  <% } else if (levelDisplay !== 'N/A' && levelDisplay !== 'none') { %>
+                  <span class="inline-flex items-center rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-400">
+                    <%= levelDisplay %>
+                  </span>
+                  <% } else { %>
+                  <span class="inline-flex items-center rounded-full bg-gray-500/10 px-2.5 py-0.5 text-xs font-medium text-gray-400">
+                    Sem nivel
+                  </span>
+                  <% } %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                  <% if (member.last_seen) { %>
+                  <span class="text-gray-300"><%= new Date(member.last_seen).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %></span>
+                  <% } else { %>
+                  <span class="text-gray-500">Nunca</span>
+                  <% } %>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <% if (member.status === 'active') { %>
+                  <span class="inline-flex items-center gap-1 text-xs text-green-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-400"></span>
+                    Ativo
+                  </span>
+                  <% } else if (member.status === 'none') { %>
+                  <span class="inline-flex items-center gap-1 text-xs text-gray-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-gray-400"></span>
+                    Sem plano
+                  </span>
+                  <% } else { %>
+                  <span class="inline-flex items-center gap-1 text-xs text-yellow-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-yellow-400"></span>
+                    <%= member.status %>
+                  </span>
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <% if (totalPages > 1) { %>
+        <div class="px-6 py-4 border-t border-gray-700">
+          <nav class="flex items-center justify-center gap-2">
+            <% if (currentPage > 1) { %>
+            <a href="/users?page=<%= currentPage - 1 %>&limit=<%= limit %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sort ? '&sort=' + sort : '' %>"
+              class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">
+              &laquo;
+            </a>
+            <% } %>
+            <%
+              var startPage = Math.max(1, currentPage - 3);
+              var endPage = Math.min(totalPages, currentPage + 3);
+              if (startPage > 1) { %>
+              <a href="/users?page=1&limit=<%= limit %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sort ? '&sort=' + sort : '' %>"
+                class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">1</a>
+              <% if (startPage > 2) { %><span class="text-gray-500 px-1">...</span><% } %>
+            <% } %>
+            <% for (var i = startPage; i <= endPage; i++) { %>
+            <a href="/users?page=<%= i %>&limit=<%= limit %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sort ? '&sort=' + sort : '' %>"
+              class="rounded-lg px-3 py-2 text-sm font-medium transition-colors <%= i === currentPage ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700' %>">
+              <%= i %>
+            </a>
+            <% } %>
+            <% if (endPage < totalPages) { %>
+              <% if (endPage < totalPages - 1) { %><span class="text-gray-500 px-1">...</span><% } %>
+              <a href="/users?page=<%= totalPages %>&limit=<%= limit %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sort ? '&sort=' + sort : '' %>"
+                class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors"><%= totalPages %></a>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+            <a href="/users?page=<%= currentPage + 1 %>&limit=<%= limit %><%= search ? '&search=' + encodeURIComponent(search) : '' %><%= sort ? '&sort=' + sort : '' %>"
+              class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">
+              &raquo;
+            </a>
+            <% } %>
+          </nav>
+        </div>
+        <% } %>
+      </div>
+      <% } %>
+
+    </main>
+  </div>
+<script>
+(function() {
+  var sel = document.getElementById('sort-select');
+  if (sel) {
+    sel.addEventListener('change', function() {
+      var params = new URLSearchParams(window.location.search);
+      if (this.value) {
+        params.set('sort', this.value);
+      } else {
+        params.delete('sort');
+      }
+      params.set('page', '1');
+      window.location.href = '/users?' + params.toString();
+    });
+  }
+})();
+</script>
+</body>
+</html>

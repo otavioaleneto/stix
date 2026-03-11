@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - <%= achievement ? 'Editar' : 'Nova' %> Conquista</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="mb-6">
+        <a href="/social/achievements" class="text-sm text-gray-400 hover:text-white transition-colors">&larr; Voltar para Conquistas</a>
+        <h1 class="text-2xl font-bold text-white mt-2"><%= achievement ? 'Editar' : 'Nova' %> Conquista</h1>
+      </div>
+
+      <form action="<%= achievement ? '/social/achievements/' + achievement.id : '/social/achievements' %>" method="POST" class="max-w-2xl">
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6 space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Chave (unica)</label>
+              <input type="text" name="key" value="<%= achievement ? achievement.key : '' %>" required pattern="[a-z0-9_]+" placeholder="ex: first_download" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white font-mono">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Icone (emoji)</label>
+              <input type="text" name="icon" value="<%= achievement ? achievement.icon : '🏆' %>" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white text-center text-2xl" maxlength="10">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Nome</label>
+            <input type="text" name="name" value="<%= achievement ? achievement.name : '' %>" required class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Descricao</label>
+            <textarea name="description" rows="2" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white"><%= achievement ? (achievement.description || '') : '' %></textarea>
+          </div>
+          <div class="grid grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Categoria</label>
+              <select name="category" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+                <% ['download', 'social', 'membership', 'special'].forEach(function(cat) { %>
+                <option value="<%= cat %>" <%= (achievement && achievement.category === cat) ? 'selected' : '' %>><%= cat %></option>
+                <% }) %>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Status</label>
+              <select name="active" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+                <option value="1" <%= (!achievement || achievement.active) ? 'selected' : '' %>>Ativo</option>
+                <option value="0" <%= (achievement && !achievement.active) ? 'selected' : '' %>>Inativo</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Ordem</label>
+              <input type="number" name="sort_order" value="<%= achievement ? achievement.sort_order : 0 %>" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+            </div>
+          </div>
+
+          <div class="border-t border-gray-700 pt-4">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Regra Automatica</label>
+            <% var autoType = (achievement && achievement.auto_rule) ? achievement.auto_rule.type : 'none'; %>
+            <div class="grid grid-cols-3 gap-4">
+              <div>
+                <select name="auto_rule_type" id="auto-rule-type" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white" onchange="toggleAutoFields()">
+                  <option value="none" <%= autoType === 'none' ? 'selected' : '' %>>Manual (sem regra)</option>
+                  <option value="downloads" <%= autoType === 'downloads' ? 'selected' : '' %>>Downloads</option>
+                  <option value="comments" <%= autoType === 'comments' ? 'selected' : '' %>>Comentarios</option>
+                  <option value="rooms" <%= autoType === 'rooms' ? 'selected' : '' %>>Salas criadas</option>
+                  <option value="friends" <%= autoType === 'friends' ? 'selected' : '' %>>Amigos</option>
+                  <option value="membership" <%= autoType === 'membership' ? 'selected' : '' %>>Membership</option>
+                </select>
+              </div>
+              <div id="threshold-field">
+                <input type="number" name="auto_rule_threshold" value="<%= (achievement && achievement.auto_rule && achievement.auto_rule.threshold) ? achievement.auto_rule.threshold : 1 %>" min="1" placeholder="Threshold" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+              </div>
+              <div id="level-field" class="hidden">
+                <input type="text" name="auto_rule_level" value="<%= (achievement && achievement.auto_rule && achievement.auto_rule.level) ? achievement.auto_rule.level : '' %>" placeholder="ex: gold, vip" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+          <button type="submit" class="rounded-lg bg-brand-600 px-6 py-2 text-sm font-medium text-white hover:bg-brand-500 transition-colors">Salvar</button>
+          <a href="/social/achievements" class="rounded-lg bg-gray-700 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">Cancelar</a>
+        </div>
+      </form>
+
+<script>
+function toggleAutoFields() {
+  var type = document.getElementById('auto-rule-type').value;
+  document.getElementById('threshold-field').style.display = (type !== 'none' && type !== 'membership') ? '' : 'none';
+  document.getElementById('level-field').style.display = type === 'membership' ? '' : 'none';
+}
+toggleAutoFields();
+</script>
+    </main>
+  </div>
+</body>
+</html>

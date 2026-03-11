@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Detalhes da Sala</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="mb-6">
+        <a href="/social/rooms" class="text-sm text-gray-400 hover:text-white transition-colors">&larr; Voltar para Salas</a>
+        <h1 class="text-2xl font-bold text-white mt-2">Detalhes da Sala</h1>
+      </div>
+
+      <div class="max-w-4xl space-y-6">
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <h2 class="text-lg font-semibold text-white mb-4"><%= room.title %></h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Jogo</span>
+              <span class="text-sm text-white"><%= room.game_title || (room.game ? room.game.title : '-') %></span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Status</span>
+              <% var statusColors = { scheduled: 'bg-blue-500/20 text-blue-400', active: 'bg-green-500/20 text-green-400', finished: 'bg-gray-500/20 text-gray-400', cancelled: 'bg-red-500/20 text-red-400' }; %>
+              <% var statusLabels = { scheduled: 'Agendada', active: 'Ativa', finished: 'Finalizada', cancelled: 'Cancelada' }; %>
+              <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium <%= statusColors[room.status] || 'bg-gray-500/20 text-gray-400' %>">
+                <%= statusLabels[room.status] || room.status %>
+              </span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Tipo de Servidor</span>
+              <span class="text-sm text-white"><%= room.server_type === 'system_link' ? 'System Link' : 'Stealth Server' %></span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Max Jogadores</span>
+              <span class="text-sm text-white"><%= room.max_players %></span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Visibilidade</span>
+              <span class="text-sm text-white"><%= room.is_public ? 'Pública' : 'Privada' %></span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Data Agendada</span>
+              <span class="text-sm text-white"><%= room.scheduled_at ? new Date(room.scheduled_at).toLocaleString('pt-BR') : '-' %></span>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Criador</span>
+              <div class="flex items-center gap-2 mt-1">
+                <% var creator = room.creator || {}; %>
+                <% if (creator.avatar_url) { %>
+                <img src="<%= creator.avatar_url %>" class="w-6 h-6 rounded-full" alt="">
+                <% } else { %>
+                <div class="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white"><%= ((creator.display_name || creator.username || '?')[0] || '?').toUpperCase() %></div>
+                <% } %>
+                <span class="text-sm text-white"><%= creator.display_name || creator.username || 'Desconhecido' %></span>
+              </div>
+            </div>
+            <div>
+              <span class="block text-xs font-medium text-gray-400 uppercase">Criado em</span>
+              <span class="text-sm text-white"><%= room.createdAt ? new Date(room.createdAt).toLocaleString('pt-BR') : '-' %></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <h3 class="text-sm font-medium text-gray-300 mb-3">Participantes (<%= room.participants ? room.participants.length : 0 %>)</h3>
+          <% if (room.participants && room.participants.length > 0) { %>
+          <div class="space-y-2">
+            <% room.participants.forEach(function(p) { %>
+            <div class="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-700/50">
+              <div class="flex items-center gap-3">
+                <% var up = p.userProfile || {}; %>
+                <% if (up.avatar_url) { %>
+                <img src="<%= up.avatar_url %>" class="w-8 h-8 rounded-full" alt="">
+                <% } else { %>
+                <div class="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center text-sm text-white"><%= ((up.display_name || up.username || '?')[0] || '?').toUpperCase() %></div>
+                <% } %>
+                <span class="text-sm text-white"><%= up.display_name || up.username || 'Desconhecido' %></span>
+              </div>
+              <% var pStatusColors = { joined: 'bg-green-500/20 text-green-400', confirmed: 'bg-green-500/20 text-green-400', invited: 'bg-yellow-500/20 text-yellow-400', declined: 'bg-red-500/20 text-red-400' }; %>
+              <% var pStatusLabels = { joined: 'Entrou', confirmed: 'Confirmado', invited: 'Convidado', declined: 'Recusou' }; %>
+              <span class="text-xs px-2 py-0.5 rounded-full <%= pStatusColors[p.status] || 'bg-gray-500/20 text-gray-400' %>"><%= pStatusLabels[p.status] || p.status %></span>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %>
+          <p class="text-sm text-gray-400">Nenhum participante.</p>
+          <% } %>
+        </div>
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <h3 class="text-sm font-medium text-gray-300 mb-3">Chat (<%= messages.length %> mensagens)</h3>
+          <% if (messages.length > 0) { %>
+          <div class="space-y-3 max-h-96 overflow-y-auto">
+            <% messages.forEach(function(msg) { %>
+            <div class="flex gap-3 py-2">
+              <% var msgUser = msg.userProfile || {}; %>
+              <% if (msgUser.avatar_url) { %>
+              <img src="<%= msgUser.avatar_url %>" class="w-7 h-7 rounded-full flex-shrink-0 mt-0.5" alt="">
+              <% } else { %>
+              <div class="w-7 h-7 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white flex-shrink-0 mt-0.5"><%= ((msgUser.display_name || msgUser.username || '?')[0] || '?').toUpperCase() %></div>
+              <% } %>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-medium text-brand-400"><%= msgUser.display_name || msgUser.username || 'Desconhecido' %></span>
+                  <span class="text-xs text-gray-500"><%= msg.createdAt ? new Date(msg.createdAt).toLocaleString('pt-BR') : '' %></span>
+                </div>
+                <p class="text-sm text-gray-300 mt-0.5 break-words"><%= msg.message %></p>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } else { %>
+          <p class="text-sm text-gray-400">Nenhuma mensagem no chat.</p>
+          <% } %>
+        </div>
+
+        <div class="flex gap-3">
+          <a href="/social/rooms/<%= room.id %>/edit" class="rounded-lg bg-blue-600 px-6 py-2 text-sm font-medium text-white hover:bg-blue-500 transition-colors">Editar</a>
+          <a href="/social/rooms" class="rounded-lg bg-gray-700 px-6 py-2 text-sm font-medium text-gray-300 hover:bg-gray-600 transition-colors">Voltar</a>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

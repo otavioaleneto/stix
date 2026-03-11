@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Comentários</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Comentários</h1>
+          <p class="mt-1 text-sm text-gray-400"><%= totalComments %> comentário(s)</p>
+        </div>
+        <form action="/social/comments" method="GET" class="flex gap-2">
+          <input type="text" name="search" value="<%= search %>" placeholder="Buscar..." class="rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 w-48">
+          <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-500 transition-colors">Buscar</button>
+        </form>
+      </div>
+
+      <div class="rounded-xl bg-gray-800 border border-gray-700 overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-700">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Usuário</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:table-cell">Jogo</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Comentário</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden md:table-cell">Data</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acoes</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700">
+            <% if (comments.length === 0) { %>
+            <tr>
+              <td colspan="5" class="px-4 py-8 text-center text-gray-400 text-sm">Nenhum comentário encontrado.</td>
+            </tr>
+            <% } else { %>
+            <% comments.forEach(function(c) { %>
+            <tr class="hover:bg-gray-700/50 transition-colors">
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <% if (c.userProfile) { %>
+                  <span class="text-sm text-white"><%= c.userProfile.display_name || c.userProfile.username %></span>
+                  <% } else { %>
+                  <span class="text-sm text-gray-400">Desconhecido</span>
+                  <% } %>
+                </div>
+              </td>
+              <td class="px-4 py-3 hidden sm:table-cell">
+                <span class="text-sm text-gray-300"><%= c.game ? c.game.title : 'ID: ' + c.game_id %></span>
+              </td>
+              <td class="px-4 py-3">
+                <p class="text-sm text-gray-300 max-w-md truncate"><%= c.comment_text %></p>
+              </td>
+              <td class="px-4 py-3 hidden md:table-cell">
+                <span class="text-sm text-gray-400"><%= new Date(c.createdAt).toLocaleDateString('pt-BR') %></span>
+              </td>
+              <td class="px-4 py-3">
+                <button onclick="deleteComment(<%= c.id %>)" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors">Excluir</button>
+              </td>
+            </tr>
+            <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (totalPages > 1) { %>
+      <nav class="mt-6 flex items-center justify-center gap-2">
+        <% for (var p = 1; p <= totalPages; p++) { %>
+        <a href="/social/comments?page=<%= p %>&search=<%= search %>"
+          class="rounded-lg px-3 py-2 text-sm font-medium transition-colors <%= p === currentPage ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700' %>">
+          <%= p %>
+        </a>
+        <% } %>
+      </nav>
+      <% } %>
+
+<script>
+function deleteComment(id) {
+  if (!confirm('Tem certeza que deseja excluir este comentário?')) return;
+  fetch('/social/comments/' + id + '/delete', { method: 'POST', headers: { 'Accept': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) { if (data.success) location.reload(); else alert('Erro: ' + (data.error || 'Falha')); })
+    .catch(function(err) { alert('Erro: ' + err.message); });
+}
+</script>
+    </main>
+  </div>
+</body>
+</html>

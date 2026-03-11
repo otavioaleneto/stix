@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Administradores</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+
+      <div class="flex items-center justify-between mb-6">
+        <p class="text-sm text-gray-400"><%= admins.length %> administradores</p>
+        <div class="flex items-center gap-3">
+          <a href="/admins/roles" class="inline-flex items-center gap-2 rounded-lg bg-gray-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-600 transition-colors">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" /></svg>
+            Cargos e Permissões
+          </a>
+          <a href="/admins/new" class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            Novo Admin
+          </a>
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-gray-800 border border-gray-700 overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-700">
+          <thead class="bg-gray-800/50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Usuário</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Cargo</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Ações</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700">
+            <% admins.forEach(a => { %>
+            <tr class="hover:bg-gray-700/30">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-3">
+                  <div class="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
+                    <span class="text-xs font-medium text-white"><%= a.username.charAt(0).toUpperCase() %></span>
+                  </div>
+                  <span class="text-sm font-medium text-white"><%= a.username %></span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300"><%= a.email %></td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium
+                  <%= a.role === 'super_admin' ? 'bg-red-500/10 text-red-400' : '' %>
+                  <%= a.role === 'admin' ? 'bg-blue-500/10 text-blue-400' : '' %>
+                  <%= a.role === 'editor' ? 'bg-green-500/10 text-green-400' : '' %>
+                "><%= a.role %></span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 text-xs <%= a.active ? 'text-green-400' : 'text-gray-400' %>">
+                  <span class="h-1.5 w-1.5 rounded-full <%= a.active ? 'bg-green-400' : 'bg-gray-400' %>"></span>
+                  <%= a.active ? 'Ativo' : 'Inativo' %>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right text-sm">
+                <a href="/admins/<%= a.id %>/edit" class="text-brand-400 hover:text-brand-300 mr-3">Editar</a>
+                <form action="/admins/<%= a.id %>/delete" method="POST" class="inline" onsubmit="return confirm('Excluir este admin?')">
+                  <button type="submit" class="text-red-400 hover:text-red-300">Excluir</button>
+                </form>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+</body>
+</html>

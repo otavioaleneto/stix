@@ -1,0 +1,570 @@
+<%
+if (typeof formatElapsed !== 'function') {
+  formatElapsed = function(seconds) {
+    if (!seconds || seconds < 0) return '0s';
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor((seconds % 3600) / 60);
+    var s = seconds % 60;
+    if (h > 0) return h + 'h ' + m + 'm';
+    if (m > 0) return m + 'm ' + s + 's';
+    return s + 's';
+  };
+}
+if (typeof formatBytes !== 'function') {
+  formatBytes = function(bytes) {
+    if (!bytes || bytes === 0) return '0 B';
+    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var i = 0;
+    while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
+    return bytes.toFixed(i > 0 ? 1 : 0) + ' ' + units[i];
+  };
+}
+%>
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Downloads</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+
+      <script>
+      function formatBytes(bytes) {
+        if (!bytes || bytes === 0) return '0 B';
+        var units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        var i = 0;
+        while (bytes >= 1024 && i < units.length - 1) { bytes /= 1024; i++; }
+        return bytes.toFixed(i > 0 ? 1 : 0) + ' ' + units[i];
+      }
+      function formatElapsed(seconds) {
+        if (!seconds || seconds < 0) return '0s';
+        var h = Math.floor(seconds / 3600);
+        var m = Math.floor((seconds % 3600) / 60);
+        var s = seconds % 60;
+        if (h > 0) return h + 'h ' + m + 'm';
+        if (m > 0) return m + 'm ' + s + 's';
+        return s + 's';
+      }
+      async function cancelDl(id) {
+        if (!confirm('Cancelar este download?')) return;
+        var r = await fetch('/downloads/' + id + '/cancel', { method: 'POST' });
+        var data = await r.json();
+        if (data.success) location.reload();
+        else alert(data.message || 'Erro');
+      }
+
+      function buildSmartPagination(currentPage, totalPages) {
+        if (totalPages <= 1) return '';
+        var btnClass = 'rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors cursor-pointer';
+        var activeClass = 'rounded-lg px-3 py-2 text-sm font-medium transition-colors bg-brand-600 text-white';
+        var html = '<nav class="mt-6 flex items-center justify-center gap-2">';
+        if (currentPage > 1) {
+          html += '<button onclick="goHistoryPage(' + (currentPage - 1) + ')" class="' + btnClass + '">&laquo;</button>';
+        }
+        var startPage = Math.max(1, currentPage - 3);
+        var endPage = Math.min(totalPages, currentPage + 3);
+        if (startPage > 1) {
+          html += '<button onclick="goHistoryPage(1)" class="' + btnClass + '">1</button>';
+          if (startPage > 2) html += '<span class="text-gray-500 px-1">...</span>';
+        }
+        for (var i = startPage; i <= endPage; i++) {
+          html += '<button onclick="goHistoryPage(' + i + ')" class="' + (i === currentPage ? activeClass : btnClass) + '">' + i + '</button>';
+        }
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) html += '<span class="text-gray-500 px-1">...</span>';
+          html += '<button onclick="goHistoryPage(' + totalPages + ')" class="' + btnClass + '">' + totalPages + '</button>';
+        }
+        if (currentPage < totalPages) {
+          html += '<button onclick="goHistoryPage(' + (currentPage + 1) + ')" class="' + btnClass + '">&raquo;</button>';
+        }
+        html += '</nav>';
+        return html;
+      }
+
+      function goHistoryPage(p) {
+        historyPage = p;
+        reloadHistory();
+      }
+
+      function escHtml(str) {
+        if (!str) return '';
+        var d = document.createElement('div');
+        d.appendChild(document.createTextNode(str));
+        return d.innerHTML;
+      }
+      function reloadHistory() {
+        var btn = document.getElementById('reload-history-btn');
+        var icon = btn.querySelector('svg');
+        icon.classList.add('animate-spin');
+        btn.disabled = true;
+        var dateFrom = document.getElementById('date_from') ? document.getElementById('date_from').value : '';
+        var dateTo = document.getElementById('date_to') ? document.getElementById('date_to').value : '';
+        var dateParams = '';
+        if (dateFrom) dateParams += '&date_from=' + encodeURIComponent(dateFrom);
+        if (dateTo) dateParams += '&date_to=' + encodeURIComponent(dateTo);
+        fetch('/downloads/history?page=' + historyPage + '&limit=' + historyLimit + dateParams)
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (!data.success) return;
+            var container = document.getElementById('history-container');
+            if (data.downloads.length === 0) {
+              container.innerHTML = '<p class="text-sm text-gray-400">Nenhum download registrado.</p>';
+            } else {
+              var html = '<div class="overflow-x-auto"><table class="w-full text-sm"><thead><tr class="border-b border-gray-700">'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Jogo</th>'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Arquivo</th>'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Tamanho</th>'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Status</th>'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Usu&aacute;rio</th>'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">IP</th>'
+                + '<th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Data/Hora</th>'
+                + '</tr></thead><tbody class="divide-y divide-gray-700/50">';
+              data.downloads.forEach(function(dl) {
+                html += '<tr class="hover:bg-gray-700/30">'
+                  + '<td class="py-2.5 px-3 text-white max-w-[200px] truncate">' + escHtml(dl.game_title || '-') + '</td>'
+                  + '<td class="py-2.5 px-3 text-gray-300 max-w-[200px] truncate font-mono text-xs">' + escHtml(dl.file_name) + '</td>'
+                  + '<td class="py-2.5 px-3 text-gray-300">' + formatBytes(parseInt(dl.bytes_transferred) || 0) + '</td>'
+                  + '<td class="py-2.5 px-3">' + getStatusBadge(dl.status) + '</td>'
+                  + '<td class="py-2.5 px-3 text-gray-400 text-xs">' + escHtml(dl.user_identifier || '-') + '</td>'
+                  + '<td class="py-2.5 px-3 text-gray-400 text-xs font-mono">' + escHtml(dl.client_ip || '-') + '</td>'
+                  + '<td class="py-2.5 px-3 text-gray-400 text-xs">' + formatDateTimeBR(dl.started_at) + '</td>'
+                  + '</tr>';
+              });
+              html += '</tbody></table></div>';
+              html += buildSmartPagination(data.currentPage, data.totalPages);
+              container.innerHTML = html;
+            }
+            var statsEl = document.getElementById('filtered-stats');
+            if (statsEl) {
+              if (data.filteredStats) {
+                statsEl.innerHTML = '<div class="flex flex-wrap items-center gap-4 text-sm">'
+                  + '<span class="text-gray-400">Per\u00edodo: <span class="text-white font-medium">' + data.filteredStats.total + '</span> downloads</span>'
+                  + '<span class="text-gray-400">Completos: <span class="text-green-400 font-medium">' + data.filteredStats.completed + '</span></span>'
+                  + '<span class="text-gray-400">Cancelados: <span class="text-yellow-400 font-medium">' + data.filteredStats.cancelled + '</span></span>'
+                  + '<span class="text-gray-400">Transferido: <span class="text-blue-400 font-medium">' + formatBytes(data.filteredStats.bytes) + '</span></span>'
+                  + '</div>';
+                statsEl.classList.remove('hidden');
+              } else {
+                statsEl.innerHTML = '';
+                statsEl.classList.add('hidden');
+              }
+            }
+            var clearBtn = document.getElementById('clear-filter-btn');
+            if (clearBtn) {
+              clearBtn.style.display = (dateFrom || dateTo) ? '' : 'none';
+            }
+            updateFilterButtons(dateFrom, dateTo);
+          })
+          .catch(function() {})
+          .finally(function() {
+            icon.classList.remove('animate-spin');
+            btn.disabled = false;
+          });
+      }
+      function getStatusBadge(status) {
+        if (status === 'completed') return '<span class="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-400">Completo</span>';
+        if (status === 'active') return '<span class="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400">Ativo</span>';
+        if (status === 'cancelled') return '<span class="inline-flex items-center rounded-full bg-yellow-500/10 px-2 py-0.5 text-xs font-medium text-yellow-400">Cancelado</span>';
+        if (status === 'failed') return '<span class="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-400">Falhou</span>';
+        return '<span class="text-xs text-gray-400">' + escHtml(status) + '</span>';
+      }
+      function formatDateTimeBR(dateStr) {
+        if (!dateStr) return 'N/A';
+        try {
+          return new Date(dateStr).toLocaleString('pt-BR', { timeZone: '<%= timezone %>' });
+        } catch(e) { return new Date(dateStr).toLocaleString('pt-BR'); }
+      }
+      </script>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-4">
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Total Hoje</p>
+          <p class="text-2xl font-bold text-white mt-1"><%= todayTotal %></p>
+        </div>
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-4">
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Completos</p>
+          <p class="text-2xl font-bold text-green-400 mt-1"><%= todayCompleted %></p>
+        </div>
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-4">
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Cancelados</p>
+          <p class="text-2xl font-bold text-yellow-400 mt-1"><%= todayCancelled %></p>
+        </div>
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-4">
+          <p class="text-xs text-gray-400 uppercase tracking-wider">Transferido</p>
+          <p class="text-2xl font-bold text-blue-400 mt-1"><%= formatBytes(todayBytes) %></p>
+        </div>
+      </div>
+
+      <div class="rounded-xl bg-gray-800 border border-gray-700 p-6 mb-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+          <div class="flex items-center gap-3">
+            <h3 class="text-lg font-medium text-white">Downloads Ativos</h3>
+            <span id="active-count" class="inline-flex items-center rounded-full bg-brand-600/20 px-2.5 py-0.5 text-xs font-medium text-brand-400"><%= activeDownloads.length %> ativo(s)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-400">Por p&aacute;gina:</span>
+            <% [15, 30, 50].forEach(function(val) { %>
+            <button type="button" onclick="setActiveLimit(<%= val %>)"
+              class="rounded-lg px-3 py-1.5 text-sm font-medium transition-colors <%= val === 15 ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700' %>"
+              data-active-limit-btn="<%= val %>">
+              <%= val %>
+            </button>
+            <% }) %>
+          </div>
+        </div>
+
+        <div id="active-downloads">
+          <% if (activeDownloads.length === 0) { %>
+          <p id="no-active" class="text-sm text-gray-400">Nenhum download em andamento.</p>
+          <% } else { %>
+          <div class="space-y-3">
+            <% activeDownloads.forEach(function(dl) { %>
+            <div class="active-dl-row rounded-lg bg-gray-700/50 border border-gray-600 p-4" data-id="<%= dl.id %>">
+              <div class="flex items-center justify-between mb-2">
+                <div class="flex-1 min-w-0 mr-4">
+                  <p class="text-sm font-medium text-white truncate"><%= dl.gameTitle || dl.fileName %></p>
+                  <p class="text-xs text-gray-400 truncate"><%= dl.fileName %></p>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                  <button onclick="cancelDl(<%= dl.id %>)" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors">Cancelar</button>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex-1 bg-gray-700 rounded-full h-2 overflow-hidden">
+                  <% if (dl.external && dl.bytesTransferred === 0) { %>
+                  <div class="bg-brand-500 h-2 rounded-full animate-pulse" style="width: 100%; opacity: 0.4"></div>
+                  <% } else { %>
+                  <div class="bg-brand-500 h-2 rounded-full transition-all" style="width: <%= dl.progress %>%"></div>
+                  <% } %>
+                </div>
+                <span class="text-xs text-gray-400 shrink-0 w-10 text-right"><% if (dl.external && dl.bytesTransferred === 0) { %>...</span>
+                <% } else { %><%= dl.progress %>%</span><% } %>
+              </div>
+              <div class="flex items-center gap-4 mt-1.5 text-xs text-gray-400">
+                <% if (dl.speed > 0) { %>
+                <span><%= formatBytes(dl.speed) %>/s</span>
+                <% } %>
+                <% if (dl.bytesTransferred > 0) { %>
+                <span><%= formatBytes(dl.bytesTransferred) %> / <%= dl.fileSize > 0 ? formatBytes(dl.fileSize) : '?' %></span>
+                <% } else if (dl.fileSize > 0) { %>
+                <span>Tamanho: <%= formatBytes(dl.fileSize) %></span>
+                <% } %>
+                <% if (dl.elapsedSeconds > 0) { %>
+                <span><%= formatElapsed(dl.elapsedSeconds) %></span>
+                <% } %>
+                <span>IP: <%= dl.clientIp %></span>
+                <% if (dl.external) { %>
+                <span class="text-brand-400">CDN</span>
+                <% } %>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+        </div>
+        <div id="active-pagination"></div>
+      </div>
+
+      <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+          <h3 class="text-lg font-medium text-white">Hist&oacute;rico</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-400">Por p&aacute;gina:</span>
+            <% [15, 30, 50].forEach(function(val) { %>
+            <button type="button" onclick="setHistoryLimit(<%= val %>)"
+              class="rounded-lg px-3 py-1.5 text-sm font-medium transition-colors <%= val === limit ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700' %>"
+              data-limit-btn="<%= val %>">
+              <%= val %>
+            </button>
+            <% }) %>
+            <button type="button" id="reload-history-btn" onclick="reloadHistory()" title="Recarregar hist&oacute;rico" class="ml-2 rounded-lg p-1.5 text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M2.985 19.644l3.181-3.182" /></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="flex flex-wrap items-center gap-2 mb-3">
+            <span class="text-sm text-gray-400">Filtrar:</span>
+            <button type="button" onclick="setDateQuick('hoje')" data-quick-filter="hoje" class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-gray-700 text-gray-300 hover:text-white border border-gray-600">Hoje</button>
+            <button type="button" onclick="setDateQuick('semana')" data-quick-filter="semana" class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-gray-700 text-gray-300 hover:text-white border border-gray-600">Semana</button>
+            <button type="button" onclick="setDateQuick('mes')" data-quick-filter="mes" class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-gray-700 text-gray-300 hover:text-white border border-gray-600">M&ecirc;s</button>
+            <button type="button" onclick="setDateQuick('ano')" data-quick-filter="ano" class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-gray-700 text-gray-300 hover:text-white border border-gray-600">Ano</button>
+            <button type="button" onclick="setDateQuick('tudo')" data-quick-filter="tudo" class="rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-gray-700 text-gray-300 hover:text-white border border-gray-600">Tudo</button>
+            <span class="text-gray-600 mx-1">|</span>
+            <div class="flex items-center gap-2">
+              <label class="text-xs text-gray-400">De:</label>
+              <input type="date" id="date_from" value="<%= dateFrom %>" class="rounded-lg border-0 bg-gray-700 px-2 py-1 text-xs text-white focus:ring-2 focus:ring-brand-500">
+              <label class="text-xs text-gray-400">At&eacute;:</label>
+              <input type="date" id="date_to" value="<%= dateTo %>" class="rounded-lg border-0 bg-gray-700 px-2 py-1 text-xs text-white focus:ring-2 focus:ring-brand-500">
+              <button type="button" onclick="applyDateFilter()" class="rounded-lg bg-brand-600 px-3 py-1 text-xs font-medium text-white hover:bg-brand-500 transition-colors">Filtrar</button>
+              <button type="button" id="clear-filter-btn" onclick="clearDateFilter()" class="rounded-lg bg-gray-700 px-3 py-1 text-xs font-medium text-gray-400 hover:text-white transition-colors" style="<%= (dateFrom || dateTo) ? '' : 'display:none' %>">Limpar</button>
+            </div>
+          </div>
+          <div id="filtered-stats" class="<%= filteredStats ? '' : 'hidden' %> rounded-lg bg-gray-700/50 border border-gray-600 px-4 py-2.5 mb-3">
+            <% if (filteredStats) { %>
+            <div class="flex flex-wrap items-center gap-4 text-sm">
+              <span class="text-gray-400">Per&iacute;odo: <span class="text-white font-medium"><%= filteredStats.total %></span> downloads</span>
+              <span class="text-gray-400">Completos: <span class="text-green-400 font-medium"><%= filteredStats.completed %></span></span>
+              <span class="text-gray-400">Cancelados: <span class="text-yellow-400 font-medium"><%= filteredStats.cancelled %></span></span>
+              <span class="text-gray-400">Transferido: <span class="text-blue-400 font-medium"><%= formatBytes(filteredStats.bytes) %></span></span>
+            </div>
+            <% } %>
+          </div>
+        </div>
+
+        <div id="history-container">
+        <% if (historyDownloads.length === 0) { %>
+        <p class="text-sm text-gray-400">Nenhum download registrado.</p>
+        <% } else { %>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-gray-700">
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Jogo</th>
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Arquivo</th>
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Tamanho</th>
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Status</th>
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Usu&aacute;rio</th>
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">IP</th>
+                <th class="text-left py-2 px-3 text-xs text-gray-400 font-medium">Data/Hora</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700/50">
+              <% historyDownloads.forEach(function(dl) { %>
+              <tr class="hover:bg-gray-700/30">
+                <td class="py-2.5 px-3 text-white max-w-[200px] truncate"><%= dl.game_title || '-' %></td>
+                <td class="py-2.5 px-3 text-gray-300 max-w-[200px] truncate font-mono text-xs"><%= dl.file_name %></td>
+                <td class="py-2.5 px-3 text-gray-300"><%= formatBytes(parseInt(dl.bytes_transferred) || 0) %></td>
+                <td class="py-2.5 px-3">
+                  <% if (dl.status === 'completed') { %>
+                  <span class="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-400">Completo</span>
+                  <% } else if (dl.status === 'active') { %>
+                  <span class="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-400">Ativo</span>
+                  <% } else if (dl.status === 'cancelled') { %>
+                  <span class="inline-flex items-center rounded-full bg-yellow-500/10 px-2 py-0.5 text-xs font-medium text-yellow-400">Cancelado</span>
+                  <% } else if (dl.status === 'failed') { %>
+                  <span class="inline-flex items-center rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-400">Falhou</span>
+                  <% } else { %>
+                  <span class="text-xs text-gray-400"><%= dl.status %></span>
+                  <% } %>
+                </td>
+                <td class="py-2.5 px-3 text-gray-400 text-xs"><%= dl.user_identifier || '-' %></td>
+                <td class="py-2.5 px-3 text-gray-400 text-xs font-mono"><%= dl.client_ip || '-' %></td>
+                <td class="py-2.5 px-3 text-gray-400 text-xs"><%= formatDateTime(dl.started_at) %></td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="history-pagination">
+        <script>document.getElementById('history-pagination').innerHTML = buildSmartPagination(<%= currentPage %>, <%= totalPages %>);</script>
+        </div>
+        <% } %>
+        </div>
+      </div>
+
+      <script>
+      var historyPage = <%= currentPage %>;
+      var historyLimit = <%= limit %>;
+      var activeLimit = 15;
+      var activePage = 1;
+      var activeQuickFilter = '<%= dateFrom ? "custom" : "" %>';
+
+      function setDateQuick(period) {
+        var now = new Date();
+        var from = '';
+        var to = now.toISOString().split('T')[0];
+        if (period === 'hoje') {
+          from = to;
+        } else if (period === 'semana') {
+          var d = new Date(now);
+          d.setDate(d.getDate() - 7);
+          from = d.toISOString().split('T')[0];
+        } else if (period === 'mes') {
+          var d = new Date(now);
+          d.setMonth(d.getMonth() - 1);
+          from = d.toISOString().split('T')[0];
+        } else if (period === 'ano') {
+          var d = new Date(now);
+          d.setFullYear(d.getFullYear() - 1);
+          from = d.toISOString().split('T')[0];
+        } else {
+          from = '';
+          to = '';
+        }
+        document.getElementById('date_from').value = from;
+        document.getElementById('date_to').value = to;
+        activeQuickFilter = period;
+        historyPage = 1;
+        reloadHistory();
+      }
+
+      function applyDateFilter() {
+        activeQuickFilter = 'custom';
+        historyPage = 1;
+        reloadHistory();
+      }
+
+      function clearDateFilter() {
+        document.getElementById('date_from').value = '';
+        document.getElementById('date_to').value = '';
+        activeQuickFilter = '';
+        historyPage = 1;
+        reloadHistory();
+      }
+
+      function setHistoryLimit(val) {
+        historyLimit = val;
+        historyPage = 1;
+        document.querySelectorAll('[data-limit-btn]').forEach(function(btn) {
+          var v = parseInt(btn.getAttribute('data-limit-btn'));
+          if (v === val) {
+            btn.className = 'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors bg-brand-600 text-white';
+          } else {
+            btn.className = 'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors bg-gray-800 text-gray-400 hover:text-white border border-gray-700';
+          }
+        });
+        reloadHistory();
+      }
+
+      function updateFilterButtons(dateFrom, dateTo) {
+        var activeCls = 'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-brand-600 text-white border border-brand-600';
+        var normalCls = 'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors bg-gray-700 text-gray-300 hover:text-white border border-gray-600';
+        document.querySelectorAll('[data-quick-filter]').forEach(function(btn) {
+          var f = btn.getAttribute('data-quick-filter');
+          btn.className = (f === activeQuickFilter) ? activeCls : normalCls;
+        });
+      }
+
+      function setActiveLimit(val) {
+        activeLimit = val;
+        activePage = 1;
+        document.querySelectorAll('[data-active-limit-btn]').forEach(function(btn) {
+          var v = parseInt(btn.getAttribute('data-active-limit-btn'));
+          if (v === val) {
+            btn.className = 'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors bg-brand-600 text-white';
+          } else {
+            btn.className = 'rounded-lg px-3 py-1.5 text-sm font-medium transition-colors bg-gray-800 text-gray-400 hover:text-white border border-gray-700';
+          }
+        });
+        refreshActive();
+      }
+
+      function setActivePage(p) {
+        activePage = p;
+        refreshActive();
+      }
+
+      function buildSmartPaginationButtons(currentPage, totalPages) {
+        if (totalPages <= 1) return '';
+        var html = '<nav class="mt-6 flex items-center justify-center gap-2">';
+        if (currentPage > 1) {
+          html += '<button onclick="setActivePage(' + (currentPage - 1) + ')" class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">&laquo;</button>';
+        }
+        var startPage = Math.max(1, currentPage - 3);
+        var endPage = Math.min(totalPages, currentPage + 3);
+        if (startPage > 1) {
+          html += '<button onclick="setActivePage(1)" class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">1</button>';
+          if (startPage > 2) html += '<span class="text-gray-500 px-1">...</span>';
+        }
+        for (var i = startPage; i <= endPage; i++) {
+          html += '<button onclick="setActivePage(' + i + ')" class="rounded-lg px-3 py-2 text-sm font-medium transition-colors '
+            + (i === currentPage ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700')
+            + '">' + i + '</button>';
+        }
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) html += '<span class="text-gray-500 px-1">...</span>';
+          html += '<button onclick="setActivePage(' + totalPages + ')" class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">' + totalPages + '</button>';
+        }
+        if (currentPage < totalPages) {
+          html += '<button onclick="setActivePage(' + (currentPage + 1) + ')" class="rounded-lg px-3 py-2 text-sm font-medium bg-gray-800 text-gray-400 hover:text-white border border-gray-700 transition-colors">&raquo;</button>';
+        }
+        html += '</nav>';
+        return html;
+      }
+
+      function renderActivePagination(total) {
+        var pagEl = document.getElementById('active-pagination');
+        var totalPages = Math.ceil(total / activeLimit);
+        if (totalPages <= 1) { pagEl.innerHTML = ''; return; }
+        if (activePage > totalPages) activePage = totalPages;
+        pagEl.innerHTML = buildSmartPaginationButtons(activePage, totalPages);
+      }
+
+      function refreshActive() {
+        fetch('/downloads/active')
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (!data.success) return;
+            var container = document.getElementById('active-downloads');
+            var countEl = document.getElementById('active-count');
+            var allDls = data.downloads;
+            countEl.textContent = allDls.length + ' ativo(s)';
+            if (allDls.length === 0) {
+              container.innerHTML = '<p id="no-active" class="text-sm text-gray-400">Nenhum download em andamento.</p>';
+              renderActivePagination(0);
+              return;
+            }
+            var totalPages = Math.ceil(allDls.length / activeLimit);
+            if (activePage > totalPages) activePage = totalPages;
+            var start = (activePage - 1) * activeLimit;
+            var dls = allDls.slice(start, start + activeLimit);
+            renderActivePagination(allDls.length);
+            var html = '<div class="space-y-3">';
+            dls.forEach(function(dl) {
+              var isExternalNoProgress = dl.external && dl.bytesTransferred === 0;
+              var progressBar = isExternalNoProgress
+                ? '<div class="bg-brand-500 h-2 rounded-full animate-pulse" style="width: 100%; opacity: 0.4"></div>'
+                : '<div class="bg-brand-500 h-2 rounded-full transition-all" style="width: ' + dl.progress + '%"></div>';
+              var progressText = isExternalNoProgress ? '...' : dl.progress + '%';
+
+              var infoItems = '';
+              if (dl.speed > 0) infoItems += '<span>' + formatBytes(dl.speed) + '/s</span>';
+              if (dl.bytesTransferred > 0) {
+                infoItems += '<span>' + formatBytes(dl.bytesTransferred) + ' / ' + (dl.fileSize > 0 ? formatBytes(dl.fileSize) : '?') + '</span>';
+              } else if (dl.fileSize > 0) {
+                infoItems += '<span>Tamanho: ' + formatBytes(dl.fileSize) + '</span>';
+              }
+              if (dl.elapsedSeconds > 0) infoItems += '<span>' + formatElapsed(dl.elapsedSeconds) + '</span>';
+              infoItems += '<span>IP: ' + dl.clientIp + '</span>';
+              if (dl.external) infoItems += '<span class="text-brand-400">CDN</span>';
+
+              var cancelBtn = dl.external
+                ? ''
+                : '<button onclick="cancelDl(\'' + dl.id + '\')" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors">Cancelar</button>';
+
+              html += '<div class="active-dl-row rounded-lg bg-gray-700/50 border border-gray-600 p-4" data-id="' + dl.id + '">'
+                + '<div class="flex items-center justify-between mb-2">'
+                + '<div class="flex-1 min-w-0 mr-4">'
+                + '<p class="text-sm font-medium text-white truncate">' + (dl.gameTitle || dl.fileName) + '</p>'
+                + '<p class="text-xs text-gray-400 truncate">' + dl.fileName + '</p>'
+                + '</div>'
+                + '<div class="flex items-center gap-2 shrink-0">' + cancelBtn + '</div></div>'
+                + '<div class="flex items-center gap-3">'
+                + '<div class="flex-1 bg-gray-700 rounded-full h-2 overflow-hidden">' + progressBar + '</div>'
+                + '<span class="text-xs text-gray-400 shrink-0 w-10 text-right">' + progressText + '</span>'
+                + '</div>'
+                + '<div class="flex items-center gap-4 mt-1.5 text-xs text-gray-400">' + infoItems + '</div></div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+          })
+          .catch(function() {});
+      }
+      refreshActive();
+      setInterval(refreshActive, 3000);
+      </script>
+
+    </main>
+  </div>
+</body>
+</html>

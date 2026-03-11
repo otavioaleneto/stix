@@ -1,0 +1,87 @@
+=godsend user=godsend_user
+0|godsend  | Error: Cannot find module 'web-push'
+0|godsend  | Require stack:
+0|godsend  | - /home/godsend/godsend-cms/src/services/pushService.js
+0|godsend  | - /home/godsend/godsend-cms/src/controllers/profileController.js
+0|godsend  | - /home/godsend/godsend-cms/src/routes/profile.js
+0|godsend  | - /home/godsend/godsend-cms/src/app.js
+0|godsend  |     at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+0|godsend  |     at require (node:internal/modules/helpers:182:18)
+0|godsend  |     at Object.<anonymous> (/home/godsend/godsend-cms/src/services/pushService.js:1:17)
+0|godsend  |     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+0|godsend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+0|godsend  |     at Module.load (node:internal/modules/cjs/loader:1266:32)
+0|godsend  |     at Module._load (node:internal/modules/cjs/loader:1091:12)
+0|godsend  |     at Module.require (node:internal/modules/cjs/loader:1289:19)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+0|godsend  | 2026-03-10 17:42:52: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 17:42:53: [GODSend] Starting up...
+0|godsend  | 2026-03-10 17:42:53: [GODSend] Node.js v20.20.1
+0|godsend  | 2026-03-10 17:42:53: [GODSend] Working directory: /home/godsend/godsend-cms
+0|godsend  | 2026-03-10 17:42:53: [STARTUP] .env file: found
+0|godsend  | 2026-03-10 17:42:53: [STARTUP] DB config: {
+0|godsend  |   DATABASE_URL: '(not set)',
+0|godsend  |   DB_DIALECT: 'mysql',
+0|godsend  |   DB_HOST: 'localhost',
+0|godsend  |   DB_PORT: '3306',
+0|godsend  |   DB_NAME: 'godsend',
+0|godsend  |   DB_USER: 'godsend_user',
+0|godsend  |   DB_PASS: '(set)',
+0|godsend  |   API_OPEN_ACCESS: 'true',
+0|godsend  |   FORCE_HTTPS: 'false',
+0|godsend  |   SESSION_SECRET: '(set)'
+0|godsend  | }
+0|godsend  | 2026-03-10 17:42:53: [DB] Config: dialect=mysql host=localhost:3306 database=godsend user=godsend_user
+0|godsend  | Error: Cannot find module 'web-push'
+0|godsend  | Require stack:
+0|godsend  | - /home/godsend/godsend-cms/src/services/pushService.js
+0|godsend  | - /home/godsend/godsend-cms/src/controllers/profileController.js
+0|godsend  | - /home/godsend/godsend-cms/src/routes/profile.js
+0|godsend  | - /home/godsend/godsend-cms/src/app.js
+0|godsend  |     at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+0|godsend  |     at require (node:internal/modules/helpers:182:18)
+0|godsend  |     at Object.<anonymous> (/home/godsend/godsend-cms/src/services/pushService.js:1:17)
+0|godsend  |     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+0|godsend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+0|godsend  |     at Module.load (node:internal/modules/cjs/loader:1266:32)
+0|godsend  |     at Module._load (node:internal/modules/cjs/loader:1091:12)
+0|godsend  |     at Module.require (node:internal/modules/cjs/loader:1289:19)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+0|godsend  | 2026-03-10 17:42:53: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+0|godsend  | 2026-03-10 17:42:53: [GODSend] Starting up...
+0|godsend  | 2026-03-10 17:42:53: [GODSend] Node.js v20.20.1
+0|godsend  | 2026-03-10 17:42:53: [GODSend] Working directory: /home/godsend/godsend-cms
+0|godsend  | 2026-03-10 17:42:53: [STARTUP] .env file: found
+0|godsend  | 2026-03-10 17:42:53: [STARTUP] DB config: {
+0|godsend  |   DATABASE_URL: '(not set)',
+0|godsend  |   DB_DIALECT: 'mysql',
+0|godsend  |   DB_HOST: 'localhost',
+0|godsend  |   DB_PORT: '3306',
+0|godsend  |   DB_NAME: 'godsend',
+0|godsend  |   DB_USER: 'godsend_user',
+0|godsend  |   DB_PASS: '(set)',
+0|godsend  |   API_OPEN_ACCESS: 'true',
+0|godsend  |   FORCE_HTTPS: 'false',
+0|godsend  |   SESSION_SECRET: '(set)'
+0|godsend  | }
+0|godsend  | 2026-03-10 17:42:54: [DB] Config: dialect=mysql host=localhost:3306 database=godsend user=godsend_user
+0|godsend  | Error: Cannot find module 'web-push'
+0|godsend  | Require stack:
+0|godsend  | - /home/godsend/godsend-cms/src/services/pushService.js
+0|godsend  | - /home/godsend/godsend-cms/src/controllers/profileController.js
+0|godsend  | - /home/godsend/godsend-cms/src/routes/profile.js
+0|godsend  | - /home/godsend/godsend-cms/src/app.js
+0|godsend  |     at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+0|godsend  |     at require (node:internal/modules/helpers:182:18)
+0|godsend  |     at Object.<anonymous> (/home/godsend/godsend-cms/src/services/pushService.js:1:17)
+0|godsend  |     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+0|godsend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+0|godsend  |     at Module.load (node:internal/modules/cjs/loader:1266:32)
+0|godsend  |     at Module._load (node:internal/modules/cjs/loader:1091:12)
+0|godsend  |     at Module.require (node:internal/modules/cjs/loader:1289:19)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+^C
+godsend@masterdaweb:~$

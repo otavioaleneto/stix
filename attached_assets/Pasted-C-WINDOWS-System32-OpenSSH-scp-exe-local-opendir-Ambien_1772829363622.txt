@@ -1,0 +1,21 @@
+C:\WINDOWS\System32\OpenSSH\scp.exe: local opendir "./Ambiente de Impress\303\243o": Invalid argument
+C:\WINDOWS\System32\OpenSSH\scp.exe: failed to upload directory ./Ambiente de Impress\303\243o to ~/godsend-cms/
+C:\WINDOWS\System32\OpenSSH\scp.exe: local opendir "./Ambiente de Rede": Invalid argument
+C:\WINDOWS\System32\OpenSSH\scp.exe: failed to upload directory ./Ambiente de Rede to ~/godsend-cms/
+.adobefeatureflagnotification                                                         100%   13     0.4KB/s   00:00
+ACECache11.lst                                                                        100%   11KB 237.5KB/s   00:00
+wscRGB.icc                                                                            100%   65KB 443.0KB/s   00:00
+wsRGB.icc                                                                             100% 2728    55.5KB/s   00:00
+com.adobe.acc.container.default.prefs                                                 100%   92     2.5KB/s   00:00
+cookie                                                                                100%   34     0.9KB/s   00:00
+icons                                                                                 100%   13MB   5.6MB/s   00:02
+metadata                                                                              100%   40     1.1KB/s   00:00
+_cookie                                                                               100%    0     0.0KB/s   00:00
+_data                                                                                 100%   47KB 502.3KB/s   00:00
+_metadata                                                                             100%   40     1.2KB/s   00:00
+filesync.db                                                                           100%   44KB 263.5KB/s   00:00
+logged_out_guid                                                                       100%   38     1.1KB/s   00:00
+opm.db                                                                                100% 9216   176.5KB/s   00:00
+temp_ins_lbs_wid                                                                      100%   38     1.1KB/s   00:00
+temp_lbs_wid                                                                          100%   38     1.1KB/s   00:00
+installer.exe                                                                          84%  254MB   7.1MB/s   00:06 ETA

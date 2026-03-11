@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Configurações</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+
+      <% if (message) { %>
+      <div class="mb-6 rounded-lg p-4 border <%= messageType === 'success' ? 'bg-green-900/50 border-green-500/50' : messageType === 'error' ? 'bg-red-900/50 border-red-500/50' : 'bg-blue-900/50 border-blue-500/50' %>">
+        <p class="text-sm <%= messageType === 'success' ? 'text-green-300' : messageType === 'error' ? 'text-red-300' : 'text-blue-300' %>"><%= message %></p>
+      </div>
+      <% } %>
+
+      <div class="space-y-6">
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-medium text-white">WebDAV (Pydio)</h3>
+              <p class="text-sm text-gray-400 mt-1">Configure a conexão com o servidor WebDAV para servir os arquivos de jogos.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if (webdavConfig && webdavConfig.is_active) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-green-400"></span>
+                <span class="text-sm text-green-300">Conectado</span>
+              <% } else if (webdavConfig && webdavConfig.server_url) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-yellow-400"></span>
+                <span class="text-sm text-yellow-300">Não verificado</span>
+              <% } else { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-gray-400"></span>
+                <span class="text-sm text-gray-300">Não configurado</span>
+              <% } %>
+            </div>
+          </div>
+
+          <form action="/settings/webdav" method="POST" id="webdavForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">URL do Servidor</label>
+              <input type="url" name="server_url" id="webdav_url" value="<%= webdavConfig.server_url || '' %>" required
+                class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm" placeholder="https://seu-servidor.com/dav/">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Usuário</label>
+                <input type="text" name="username" id="webdav_user" value="<%= webdavConfig.username || '' %>"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+                <input type="password" name="password" id="webdav_pass"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm"
+                  placeholder="<%= webdavConfig.password_encrypted ? '••••••••' : '' %>">
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">Salvar</button>
+              <button type="button" onclick="testWebDAV()" class="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition-colors">Testar Conexão</button>
+              <span id="webdav-status" class="text-sm"></span>
+            </div>
+          </form>
+        </div>
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-medium text-white">WordPress</h3>
+              <p class="text-sm text-gray-400 mt-1">Configure a integração com WordPress e Paid Memberships Pro para gerenciar usuários.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if (wpConfig && wpConfig.is_active) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-green-400"></span>
+                <span class="text-sm text-green-300">Conectado</span>
+              <% } else if (wpConfig && wpConfig.site_url) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-yellow-400"></span>
+                <span class="text-sm text-yellow-300">Não verificado</span>
+              <% } else { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-gray-400"></span>
+                <span class="text-sm text-gray-300">Não configurado</span>
+              <% } %>
+            </div>
+          </div>
+
+          <form action="/settings/wordpress" method="POST" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">URL do Site WordPress</label>
+              <input type="url" name="site_url" id="wp_url" value="<%= wpConfig.site_url || '' %>" required
+                class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm" placeholder="https://seu-site.com">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Consumer Key</label>
+                <input type="text" name="consumer_key" id="wp_key" value="<%= wpConfig.consumer_key || '' %>"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Consumer Secret</label>
+                <input type="password" name="consumer_secret" id="wp_secret" value="<%= wpConfig.consumer_secret || '' %>"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm">
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">Salvar</button>
+              <button type="button" onclick="testWordPress()" class="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition-colors">Testar Conexão</button>
+              <span id="wp-status" class="text-sm"></span>
+            </div>
+          </form>
+        </div>
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-medium text-white">Pydio Cells (Download Direto)</h3>
+              <p class="text-sm text-gray-400 mt-1">Configure a conexão com o Pydio Cells para gerar links de download direto, sem passar pela VPS.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if (pydioConfig && pydioConfig.is_active) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-green-400"></span>
+                <span class="text-sm text-green-300">Conectado</span>
+              <% } else if (pydioConfig && pydioConfig.base_url) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-yellow-400"></span>
+                <span class="text-sm text-yellow-300">Não verificado</span>
+              <% } else { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-gray-400"></span>
+                <span class="text-sm text-gray-300">Não configurado</span>
+              <% } %>
+            </div>
+          </div>
+
+          <form action="/settings/pydio" method="POST" id="pydioForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">URL Base do Pydio</label>
+              <input type="url" name="base_url" id="pydio_url" value="<%= pydioConfig.base_url || '' %>" required
+                class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm" placeholder="http://drive.quotaless.cloud">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Usuário</label>
+                <input type="text" name="username" id="pydio_user" value="<%= pydioConfig.username || '' %>"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+                <input type="password" name="password" id="pydio_pass"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm"
+                  placeholder="<%= pydioConfig.password_encrypted ? '••••••••' : '' %>">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Workspace</label>
+                <input type="text" name="workspace" id="pydio_workspace" value="<%= pydioConfig.workspace || 'personal-files' %>"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm" placeholder="personal-files">
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">Quando ativo, os downloads vão direto para o servidor Pydio sem passar pela VPS. Cada download gera um link único com autenticação JWT.</p>
+
+            <div class="rounded-lg bg-gray-700/50 border border-gray-600 p-4 mt-4">
+              <div class="mb-3">
+                <h4 class="text-sm font-medium text-white">CDN Proxy (Xbox/Console)</h4>
+                <p class="text-xs text-gray-400 mt-0.5">Proxy HTTP na VPS para consoles que nao suportam HTTPS. O nginx converte HTTPS para HTTP.</p>
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-400 mb-1">CDN Proxy URL</label>
+                <input type="url" name="cdn_proxy_url" value="<%= pydioConfig.cdn_proxy_url || '' %>"
+                  class="w-full rounded-lg bg-gray-700 border border-gray-600 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-brand-500" placeholder="http://cdn.speedygamesdownloads.com">
+              </div>
+              <p class="text-xs text-gray-500 mt-2">Quando preenchido, downloads de consoles/API usam esta URL ao inves do servidor Pydio direto. Configure o nginx como proxy reverso HTTPS no servidor CDN. Deixe vazio para desativar.</p>
+            </div>
+
+            <div class="rounded-lg bg-gray-700/50 border border-gray-600 p-4 mt-4">
+              <div class="mb-3">
+                <h4 class="text-sm font-medium text-white flex items-center gap-2">
+                  Cloudflare WARP (VPN)
+                  <% if (pydioConfig.warp_proxy_enabled) { %>
+                    <span class="inline-flex items-center rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">Ativado</span>
+                  <% } else { %>
+                    <span class="inline-flex items-center rounded-full bg-gray-500/20 px-2 py-0.5 text-xs font-medium text-gray-400">Desativado</span>
+                  <% } %>
+                </h4>
+                <p class="text-xs text-gray-400 mt-0.5">Usa o Cloudflare WARP como VPN no VPS para rotear o trafego pela rede otimizada do Cloudflare. Melhora a velocidade de download para consoles com rota ruim ate a VPS.</p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="warp_proxy_enabled" value="on" <%= pydioConfig.warp_proxy_enabled ? 'checked' : '' %>
+                      class="rounded bg-gray-700 border-gray-600 text-brand-500 focus:ring-brand-500 focus:ring-offset-0">
+                    <span class="text-sm text-gray-300">Ativar WARP Proxy</span>
+                  </label>
+                  <p class="text-xs text-gray-500 mt-1">Requer Cloudflare WARP instalado na VPS em modo proxy (SOCKS5).</p>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-gray-400 mb-1">Porta SOCKS5</label>
+                  <input type="number" name="warp_proxy_port" value="<%= pydioConfig.warp_proxy_port || 40000 %>" min="1024" max="65535"
+                    class="w-full rounded-lg bg-gray-700 border border-gray-600 px-3 py-2 text-white text-sm focus:ring-2 focus:ring-brand-500" placeholder="40000">
+                </div>
+              </div>
+              <p class="text-xs text-gray-500 mt-2">Quando ativado sem CDN Proxy URL, o CMS faz streaming dos downloads via WARP SOCKS5 (busca do Quotaless pela rede Cloudflare). Quando usado com CDN Proxy URL, ative o WARP em modo full tunnel para que o nginx tambem use a rede Cloudflare.</p>
+              <div class="flex items-center gap-3 mt-3">
+                <button type="button" onclick="testWarp()" class="rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-orange-500 transition-colors">Testar WARP</button>
+                <span id="warp-status" class="text-xs"></span>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-3 mt-4">
+              <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">Salvar</button>
+              <button type="button" onclick="testPydio()" class="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition-colors">Testar Conexão</button>
+            </div>
+            <div id="pydio-status" class="mt-2 text-sm"></div>
+            <div id="pydio-debug" class="mt-2 hidden rounded-lg bg-gray-900 border border-gray-700 p-3 text-xs font-mono text-gray-400 space-y-1"></div>
+          </form>
+        </div>
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-medium text-white">Fuso Horário</h3>
+              <p class="text-sm text-gray-400 mt-1">Selecione o fuso horário que o sistema deve utilizar para registrar datas e horários.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span class="text-sm text-gray-300" id="current-time"></span>
+            </div>
+          </div>
+
+          <form action="/settings/timezone" method="POST" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Fuso Horário</label>
+              <select name="timezone" id="timezone-select"
+                class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white focus:ring-2 focus:ring-brand-500 text-sm"
+                onchange="updateTimePreview()">
+                <optgroup label="Brasil">
+                  <option value="America/Sao_Paulo" <%= timezone === 'America/Sao_Paulo' ? 'selected' : '' %>>Brasília (GMT-3)</option>
+                  <option value="America/Manaus" <%= timezone === 'America/Manaus' ? 'selected' : '' %>>Manaus (GMT-4)</option>
+                  <option value="America/Belem" <%= timezone === 'America/Belem' ? 'selected' : '' %>>Belém (GMT-3)</option>
+                  <option value="America/Fortaleza" <%= timezone === 'America/Fortaleza' ? 'selected' : '' %>>Fortaleza (GMT-3)</option>
+                  <option value="America/Recife" <%= timezone === 'America/Recife' ? 'selected' : '' %>>Recife (GMT-3)</option>
+                  <option value="America/Cuiaba" <%= timezone === 'America/Cuiaba' ? 'selected' : '' %>>Cuiabá (GMT-4)</option>
+                  <option value="America/Porto_Velho" <%= timezone === 'America/Porto_Velho' ? 'selected' : '' %>>Porto Velho (GMT-4)</option>
+                  <option value="America/Rio_Branco" <%= timezone === 'America/Rio_Branco' ? 'selected' : '' %>>Rio Branco (GMT-5)</option>
+                  <option value="America/Noronha" <%= timezone === 'America/Noronha' ? 'selected' : '' %>>Fernando de Noronha (GMT-2)</option>
+                </optgroup>
+                <optgroup label="América do Norte">
+                  <option value="America/New_York" <%= timezone === 'America/New_York' ? 'selected' : '' %>>Nova York (EST)</option>
+                  <option value="America/Chicago" <%= timezone === 'America/Chicago' ? 'selected' : '' %>>Chicago (CST)</option>
+                  <option value="America/Denver" <%= timezone === 'America/Denver' ? 'selected' : '' %>>Denver (MST)</option>
+                  <option value="America/Los_Angeles" <%= timezone === 'America/Los_Angeles' ? 'selected' : '' %>>Los Angeles (PST)</option>
+                </optgroup>
+                <optgroup label="Europa">
+                  <option value="Europe/London" <%= timezone === 'Europe/London' ? 'selected' : '' %>>Londres (GMT)</option>
+                  <option value="Europe/Paris" <%= timezone === 'Europe/Paris' ? 'selected' : '' %>>Paris (CET)</option>
+                  <option value="Europe/Berlin" <%= timezone === 'Europe/Berlin' ? 'selected' : '' %>>Berlim (CET)</option>
+                  <option value="Europe/Madrid" <%= timezone === 'Europe/Madrid' ? 'selected' : '' %>>Madrid (CET)</option>
+                  <option value="Europe/Lisbon" <%= timezone === 'Europe/Lisbon' ? 'selected' : '' %>>Lisboa (WET)</option>
+                  <option value="Europe/Moscow" <%= timezone === 'Europe/Moscow' ? 'selected' : '' %>>Moscou (MSK)</option>
+                </optgroup>
+                <optgroup label="Ásia / Oceania">
+                  <option value="Asia/Tokyo" <%= timezone === 'Asia/Tokyo' ? 'selected' : '' %>>Tóquio (JST)</option>
+                  <option value="Asia/Shanghai" <%= timezone === 'Asia/Shanghai' ? 'selected' : '' %>>Xangai (CST)</option>
+                  <option value="Asia/Dubai" <%= timezone === 'Asia/Dubai' ? 'selected' : '' %>>Dubai (GST)</option>
+                  <option value="Australia/Sydney" <%= timezone === 'Australia/Sydney' ? 'selected' : '' %>>Sydney (AEST)</option>
+                </optgroup>
+                <optgroup label="Outros">
+                  <option value="UTC" <%= timezone === 'UTC' ? 'selected' : '' %>>UTC</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">Salvar</button>
+              <span class="text-sm text-gray-400" id="timezone-preview"></span>
+            </div>
+          </form>
+        </div>
+
+
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-lg font-medium text-white">Google Gemini (IA)</h3>
+              <p class="text-sm text-gray-400 mt-1">Configure a API do Google Gemini para auto-completar informações de jogos com inteligência artificial.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <% if (geminiConfig && geminiConfig.api_key) { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-green-400"></span>
+                <span class="text-sm text-green-300">Configurado</span>
+              <% } else { %>
+                <span class="h-2.5 w-2.5 rounded-full bg-gray-400"></span>
+                <span class="text-sm text-gray-300">Não configurado</span>
+              <% } %>
+            </div>
+          </div>
+
+          <form action="/settings/gemini" method="POST" id="geminiForm" class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">API Key</label>
+              <input type="password" name="api_key" id="gemini_key" value="<%= geminiConfig && geminiConfig.api_key ? geminiConfig.api_key : '' %>"
+                class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 text-sm"
+                placeholder="<%= geminiConfig && geminiConfig.api_key ? '••••••••' : 'Cole sua API Key do Google AI Studio' %>">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Modelo</label>
+              <select name="model" id="gemini_model"
+                class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white focus:ring-2 focus:ring-brand-500 text-sm">
+                <option value="gemini-2.0-flash" <%= (geminiConfig && geminiConfig.model) === 'gemini-2.0-flash' ? 'selected' : '' %>>Gemini 2.0 Flash (Recomendado)</option>
+                <option value="gemini-2.5-flash" <%= (geminiConfig && geminiConfig.model) === 'gemini-2.5-flash' ? 'selected' : '' %>>Gemini 2.5 Flash</option>
+                <option value="gemini-1.5-flash" <%= (geminiConfig && geminiConfig.model) === 'gemini-1.5-flash' ? 'selected' : '' %>>Gemini 1.5 Flash</option>
+                <option value="gemini-1.5-pro" <%= (geminiConfig && geminiConfig.model) === 'gemini-1.5-pro' ? 'selected' : '' %>>Gemini 1.5 Pro</option>
+              </select>
+            </div>
+            <div class="flex items-center gap-3">
+              <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">Salvar</button>
+              <button type="button" onclick="testGemini()" class="rounded-lg bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-600 transition-colors">Testar Conexão</button>
+              <span id="gemini-status" class="text-sm"></span>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+      <script>
+      function updateTimePreview() {
+        const tz = document.getElementById('timezone-select').value;
+        const now = new Date();
+        try {
+          const timeStr = now.toLocaleString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          const dateStr = now.toLocaleDateString('pt-BR', { timeZone: tz });
+          document.getElementById('timezone-preview').textContent = 'Horário atual: ' + dateStr + ' ' + timeStr;
+        } catch(e) {
+          document.getElementById('timezone-preview').textContent = '';
+        }
+      }
+      function updateCurrentTime() {
+        const tz = '<%= timezone %>';
+        try {
+          const now = new Date();
+          const timeStr = now.toLocaleString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          document.getElementById('current-time').textContent = timeStr;
+        } catch(e) {}
+      }
+      updateCurrentTime();
+      updateTimePreview();
+      setInterval(updateCurrentTime, 1000);
+
+      async function testWebDAV() {
+        const status = document.getElementById('webdav-status');
+        status.textContent = 'Testando...';
+        status.className = 'text-sm text-yellow-300';
+        try {
+          const res = await fetch('/settings/webdav/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              server_url: document.getElementById('webdav_url').value,
+              username: document.getElementById('webdav_user').value,
+              password: document.getElementById('webdav_pass').value
+            })
+          });
+          const data = await res.json();
+          status.textContent = data.message;
+          status.className = 'text-sm ' + (data.success ? 'text-green-300' : 'text-red-300');
+        } catch (e) {
+          status.textContent = 'Erro: ' + e.message;
+          status.className = 'text-sm text-red-300';
+        }
+      }
+
+      async function testPydio() {
+        const status = document.getElementById('pydio-status');
+        const debug = document.getElementById('pydio-debug');
+        status.innerHTML = '<span class="text-yellow-300">Testando todos os métodos de login...</span>';
+        debug.classList.add('hidden');
+        debug.innerHTML = '';
+        try {
+          const res = await fetch('/settings/pydio/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              base_url: document.getElementById('pydio_url').value,
+              username: document.getElementById('pydio_user').value,
+              password: document.getElementById('pydio_pass').value
+            })
+          });
+          const data = await res.json();
+          if (data.success) {
+            status.innerHTML = '<span class="text-green-300">' + data.message + '</span>';
+            debug.classList.remove('hidden');
+            let html = '<div class="text-green-400">Método: ' + (data.method || 'N/A') + '</div>';
+            if (data.sample_url) {
+              html += '<div class="mt-1 text-gray-500">URL exemplo:</div>';
+              html += '<div class="break-all text-blue-400">' + data.sample_url + '</div>';
+            }
+            if (data.jwt_preview) {
+              html += '<div class="mt-1 text-gray-500">JWT: ' + data.jwt_preview + '</div>';
+            }
+            debug.innerHTML = html;
+          } else {
+            status.innerHTML = '<span class="text-red-300">Falha na conexão</span>';
+            debug.classList.remove('hidden');
+            let html = '<div class="text-red-400">Detalhes:</div>';
+            if (data.errors && data.errors.length) {
+              data.errors.forEach(function(e) {
+                html += '<div class="text-gray-500">- ' + e + '</div>';
+              });
+            } else {
+              html += '<div class="text-gray-500">' + data.message + '</div>';
+            }
+            debug.innerHTML = html;
+          }
+        } catch (e) {
+          status.innerHTML = '<span class="text-red-300">Erro: ' + e.message + '</span>';
+        }
+      }
+
+      async function testWarp() {
+        const status = document.getElementById('warp-status');
+        status.innerHTML = '<span class="text-yellow-300">Testando conexao WARP...</span>';
+        try {
+          const port = document.querySelector('input[name="warp_proxy_port"]').value || 40000;
+          const res = await fetch('/settings/warp/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ port: parseInt(port) })
+          });
+          const data = await res.json();
+          if (data.success) {
+            let html = '<span class="text-green-300">WARP conectado!</span>';
+            if (data.warp_ip) html += ' <span class="text-gray-400">IP: ' + data.warp_ip + '</span>';
+            if (data.latency_ms) html += ' <span class="text-gray-400">(' + data.latency_ms + 'ms)</span>';
+            status.innerHTML = html;
+          } else {
+            status.innerHTML = '<span class="text-red-300">' + data.message + '</span>';
+          }
+        } catch (e) {
+          status.innerHTML = '<span class="text-red-300">Erro: ' + e.message + '</span>';
+        }
+      }
+
+      async function testWordPress() {
+        const status = document.getElementById('wp-status');
+        status.textContent = 'Testando...';
+        status.className = 'text-sm text-yellow-300';
+        try {
+          const res = await fetch('/settings/wordpress/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              site_url: document.getElementById('wp_url').value,
+              consumer_key: document.getElementById('wp_key').value,
+              consumer_secret: document.getElementById('wp_secret').value
+            })
+          });
+          const data = await res.json();
+          status.textContent = data.message;
+          status.className = 'text-sm ' + (data.success ? 'text-green-300' : 'text-red-300');
+        } catch (e) {
+          status.textContent = 'Erro: ' + e.message;
+          status.className = 'text-sm text-red-300';
+        }
+      }
+      async function testGemini() {
+        const status = document.getElementById('gemini-status');
+        status.textContent = 'Testando...';
+        status.className = 'text-sm text-yellow-300';
+        try {
+          const res = await fetch('/settings/gemini/test', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              api_key: document.getElementById('gemini_key').value,
+              model: document.getElementById('gemini_model').value
+            })
+          });
+          const data = await res.json();
+          status.textContent = data.message;
+          status.className = 'text-sm ' + (data.success ? 'text-green-300' : 'text-red-300');
+        } catch (e) {
+          status.textContent = 'Erro: ' + e.message;
+          status.className = 'text-sm text-red-300';
+        }
+      }
+      </script>
+
+    </main>
+  </div>
+</body>
+</html>

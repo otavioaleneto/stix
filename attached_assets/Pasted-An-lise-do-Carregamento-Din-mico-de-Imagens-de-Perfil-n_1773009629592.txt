@@ -1,0 +1,95 @@
+Análise do Carregamento Dinâmico de Imagens de Perfil no NOVA WebUI
+​
+Com base na observação do comportamento da página ao trocar entre usuários no Xbox, aqui está como o NOVA consegue carregar e vincular as imagens de perfil (gamerpic e banner):
+
+1. Mecanismo de Detecção de Mudança de Usuário
+O NOVA WebUI implementa um sistema de polling ou watch que detecta quando o usuário muda no console Xbox:
+
+Quando você troca de usuário no Xbox, o sistema envia um evento/notificação ao servidor NOVA
+
+A WebUI recebe essa notificação (possivelmente via WebSocket ou polling periódico)
+
+A página automaticamente recarrega os dados do novo usuário sem fazer F5 (refresh de página)
+
+2. Vinculação com XUID (Identificador Único do Usuário)
+Cada mudança de perfil traz um XUID diferente:
+
+Jack Sparrow: E0001564528F6E22
+
+PES 20: E00015D5BED73D6A
+
+JackSpeedy: E00012A75254B461
+
+O XUID é o identificador único que vincula TUDO ao perfil correto (imagens, conquistas, dados).
+
+3. Carregamento de Imagens (Gamerpic + Banner)
+As imagens são carregadas usando um padrão similar ao das conquistas (que você já descobriu):
+
+Fluxo provável:
+
+javascript
+// 1. Quando a página carrega ou detecta mudança de usuário:
+fetch(`/gamerpic?xuid=${XUID}`)
+  .then(r => r.blob())
+  .then(blob => {
+    const blobUrl = URL.createObjectURL(blob);
+    // Aplica ao elemento <div> da gamerpic
+    gamerpicDiv.style.backgroundImage = `url("${blobUrl}")`;
+  });
+
+// 2. Para o banner/background (com possível URL maior ou arte):
+fetch(`/userbanner?xuid=${XUID}`)
+  .then(r => r.blob())
+  .then(blob => {
+    const blobUrl = URL.createObjectURL(blob);
+    // Aplica como background da página
+    bannerDiv.style.backgroundImage = `url("${blobUrl}")`;
+  });
+4. Padrão Observado na Página
+Gamerpic: Pequeno quadrado à esquerda do nome do usuário (~60x60px)
+
+Banner/Background: Fundo da página inteira (~1440x600px ou responsivo)
+
+Ambos mudam instantaneamente quando o XUID muda
+
+As imagens usam blob:http://192.168.2.103:9999/[UUID] (não URLs diretas)
+
+5. Endpoints Prováveis do NOVA
+Com base na estrutura observada:
+
+/gamerpic?xuid={XUID} ou /gamerpic?id={XUID}
+
+/profile/picture?xuid={XUID}
+
+/user/banner?xuid={XUID}
+
+/nova/profile/{XUID}/gamerpic
+
+/nova/profile/{XUID}/banner
+
+Os endpoints retornam blobs binários (imagem em bytes), não URLs textuais.
+
+6. Sistema de Atualização Dinâmica ("Sensor")
+O "sensor" que você mencionou provavelmente funciona assim:
+
+JavaScript faz um setInterval() (~500ms-1s) chamando algo como /current-user ou /active-profile
+
+Quando o XUID retornado é diferente do anterior, a página:
+
+Atualiza o nome do usuário
+
+Busca as novas imagens (gamerpic + banner)
+
+Re-renderiza a lista de conquistas com os novos dados
+
+Para sua página recriada, você precisará:
+
+Fazer fetch do XUID atual periodicamente
+
+Quando XUID mudar, fazer fetch das imagens
+
+Usar URL.createObjectURL(blob) para convertê-las em URLs internas
+
+Aplicar via style.backgroundImage ou <img src="">
+
+Isso explica por que a página atualiza sem refresh e por que as imagens mudam corretamente para cada usuário!

@@ -1,0 +1,27 @@
+5 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+*** System restart required ***
+Last login: Mon Mar  9 15:15:30 2026 from 45.166.204.42
+root@masterdaweb:~# curl --socks5 127.0.0.1:40000 -o /dev/null -w "Velocidade: %{speed_download} bytes/s\n" https://drive.quotaless.cloud/io/personal-files/DLAC01/ARCADE/Child%20of%20Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58?pydio_jwt=8kvYXoBfNA_nzy9vWrPNmNkIatcmLbYv4t6XV_-1H60.FasnEYfXDT88UkBqlLHDdzoBq1gWaNgalqKFLHhWorM&response-content-disposition=attachment%3B%20filename%3DFB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58
+[1] 59844
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0response-content-disposition=attachment%3B%20filename%3DFB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58: command not found
+ 36 1512M   36  556M    0     0  22.7M      0  0:01:06  0:00:24  0:00:42 23.7M^C
+100 1512M  100 1512M    0     0  22.0M      0  0:01:08  0:01:08 --:--:-- 24.2M
+Velocidade: 23156258 bytes/s
+^C
+[1]+  Done                    curl --socks5 127.0.0.1:40000 -o /dev/null -w "Velocidade: %{speed_download} bytes/s\n" https://drive.quotaless.cloud/io/personal-files/DLAC01/ARCADE/Child%20of%20Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58?pydio_jwt=8kvYXoBfNA_nzy9vWrPNmNkIatcmLbYv4t6XV_-1H60.FasnEYfXDT88UkBqlLHDdzoBq1gWaNgalqKFLHhWorM
+root@masterdaweb:~# curl -o /dev/null -w "Velocidade: %{speed_download} bytes/s\n" https://drive.quotaless.cloud/io/personal-files/DLAC01/ARCADE/Child%20of%20Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58?pydio_jwt=8kvYXoBfNA_nzy9vWrPNmNkIatcmLbYv4t6XV_-1H60.FasnEYfXDT88UkBqlLHDdzoBq1gWaNgalqKFLHhWorM&response-content-disposition=attachment%3B%20filename%3DFB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58
+[1] 59905
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0response-content-disposition=attachment%3B%20filename%3DFB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58: command not found
+100 1512M  100 1512M    0     0  13.5M      0  0:01:51  0:01:51 --:--:-- 11.9M
+Velocidade: 14246672 bytes/s
+root@masterdaweb:~#

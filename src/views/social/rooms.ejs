@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Salas de Jogo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+      <div class="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-white">Salas de Jogo</h1>
+          <p class="mt-1 text-sm text-gray-400"><%= totalRooms %> sala(s)</p>
+        </div>
+        <form action="/social/rooms" method="GET" class="flex gap-2">
+          <select name="status" class="rounded-lg bg-gray-700 border border-gray-600 px-3 py-2 text-sm text-white">
+            <option value="">Todos Status</option>
+            <option value="scheduled" <%= status === 'scheduled' ? 'selected' : '' %>>Agendada</option>
+            <option value="active" <%= status === 'active' ? 'selected' : '' %>>Ativa</option>
+            <option value="finished" <%= status === 'finished' ? 'selected' : '' %>>Finalizada</option>
+            <option value="cancelled" <%= status === 'cancelled' ? 'selected' : '' %>>Cancelada</option>
+          </select>
+          <input type="text" name="search" value="<%= search %>" placeholder="Buscar..." class="rounded-lg bg-gray-700 border border-gray-600 px-4 py-2 text-sm text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 w-48">
+          <button type="submit" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-medium text-white hover:bg-brand-500 transition-colors">Buscar</button>
+        </form>
+      </div>
+
+      <div class="rounded-xl bg-gray-800 border border-gray-700 overflow-hidden">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-gray-700">
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Sala</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:table-cell">Jogo</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden md:table-cell">Criador</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden lg:table-cell">Jogadores</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider hidden lg:table-cell">Data</th>
+              <th class="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acoes</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-700">
+            <% if (rooms.length === 0) { %>
+            <tr>
+              <td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">Nenhuma sala encontrada.</td>
+            </tr>
+            <% } else { %>
+            <% rooms.forEach(function(room) { %>
+            <tr class="hover:bg-gray-700/50 transition-colors">
+              <td class="px-4 py-3">
+                <span class="text-sm font-medium text-white"><%= room.title %></span>
+              </td>
+              <td class="px-4 py-3 hidden sm:table-cell">
+                <span class="text-sm text-gray-300"><%= room.game_title || (room.game ? room.game.title : '-') %></span>
+              </td>
+              <td class="px-4 py-3 hidden md:table-cell">
+                <span class="text-sm text-gray-300"><%= room.creator ? (room.creator.display_name || room.creator.username) : '-' %></span>
+              </td>
+              <td class="px-4 py-3">
+                <% var statusColors = { scheduled: 'bg-blue-500/20 text-blue-400', active: 'bg-green-500/20 text-green-400', finished: 'bg-gray-500/20 text-gray-400', cancelled: 'bg-red-500/20 text-red-400' }; %>
+                <% var statusLabels = { scheduled: 'Agendada', active: 'Ativa', finished: 'Finalizada', cancelled: 'Cancelada' }; %>
+                <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium <%= statusColors[room.status] || 'bg-gray-500/20 text-gray-400' %>">
+                  <%= statusLabels[room.status] || room.status %>
+                </span>
+              </td>
+              <td class="px-4 py-3 hidden lg:table-cell">
+                <% var activeCount = room.participants ? room.participants.filter(function(p) { return p.status === 'joined' || p.status === 'confirmed'; }).length : 0; %>
+                <span class="text-sm text-gray-300"><%= activeCount %>/<%= room.max_players || 4 %></span>
+              </td>
+              <td class="px-4 py-3 hidden lg:table-cell">
+                <span class="text-sm text-gray-400"><%= room.scheduled_at ? new Date(room.scheduled_at).toLocaleDateString('pt-BR') : '-' %></span>
+              </td>
+              <td class="px-4 py-3">
+                <div class="flex gap-2">
+                  <a href="/social/rooms/<%= room.id %>/view" class="rounded-lg bg-gray-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-500 transition-colors" title="Visualizar"><svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></a>
+                  <a href="/social/rooms/<%= room.id %>/edit" class="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-500 transition-colors">Editar</a>
+                  <button onclick="deleteRoom(<%= room.id %>)" class="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-red-500 transition-colors">Excluir</button>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (totalPages > 1) { %>
+      <nav class="mt-6 flex items-center justify-center gap-2">
+        <% for (var p = 1; p <= totalPages; p++) { %>
+        <a href="/social/rooms?page=<%= p %>&search=<%= search %>&status=<%= status %>"
+          class="rounded-lg px-3 py-2 text-sm font-medium transition-colors <%= p === currentPage ? 'bg-brand-600 text-white' : 'bg-gray-800 text-gray-400 hover:text-white border border-gray-700' %>">
+          <%= p %>
+        </a>
+        <% } %>
+      </nav>
+      <% } %>
+
+<script>
+function deleteRoom(id) {
+  if (!confirm('Tem certeza que deseja excluir esta sala?')) return;
+  fetch('/social/rooms/' + id + '/delete', { method: 'POST', headers: { 'Accept': 'application/json' } })
+    .then(function(r) { return r.json(); })
+    .then(function(data) { if (data.success) location.reload(); else alert('Erro: ' + (data.error || 'Falha')); })
+    .catch(function(err) { alert('Erro: ' + err.message); });
+}
+</script>
+    </main>
+  </div>
+</body>
+</html>

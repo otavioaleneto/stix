@@ -1,0 +1,96 @@
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ godsend            │ cluster  │ 1    │ online    │ 0%       │ 84.9mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@masterdaweb:/home/godsend/godsend-cms# ^C
+root@masterdaweb:/home/godsend/godsend-cms# pm2 restart 0
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [0](ids: [ '0' ])
+[PM2][ERROR] Process 0 not found
+root@masterdaweb:/home/godsend/godsend-cms# pm2 restart godsend --update-env
+[PM2][ERROR] Process or Namespace godsend not found
+root@masterdaweb:/home/godsend/godsend-cms# pm2 logs godsend --lines 30
+[TAILING] Tailing last 30 lines for [godsend] process (change the value with --lines option)
+^C
+root@masterdaweb:/home/godsend/godsend-cms# su - godsend -c "pm2 restart godsend"
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [godsend](ids: [ 0 ])
+[PM2] [godsend](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ godsend            │ cluster  │ 2    │ online    │ 0%       │ 38.0mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@masterdaweb:/home/godsend/godsend-cms# su - godsend -c "pm2 restart 0"
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [0](ids: [ '0' ])
+[PM2] [godsend](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ godsend            │ cluster  │ 17   │ online    │ 0%       │ 37.6mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+root@masterdaweb:/home/godsend/godsend-cms# su - godsend -c "pm2 logs godsend --lines 30"
+[TAILING] Tailing last 30 lines for [godsend] process (change the value with --lines option)
+/home/godsend/godsend-cms/logs/error.log last 30 lines:
+0|godsend  | 2026-03-06 20:49:48: [AUTH] DB Error code: N/A
+0|godsend  | 2026-03-06 20:49:48: [AUTH] DB Error errno: N/A
+0|godsend  | 2026-03-06 20:49:48: [AUTH] Full error: Error: ConnectionManager.getConnection was called after the connection manager was closed!
+0|godsend  |     at ConnectionManager.getConnection (/home/godsend/godsend-cms/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+0|godsend  |     at /home/godsend/godsend-cms/node_modules/sequelize/lib/sequelize.js:305:111
+0|godsend  |     at /home/godsend/godsend-cms/node_modules/retry-as-promised/dist/index.js:65:25
+0|godsend  |     at new Promise (<anonymous>)
+0|godsend  |     at retryAsPromised (/home/godsend/godsend-cms/node_modules/retry-as-promised/dist/index.js:54:12)
+0|godsend  |     at Sequelize.query (/home/godsend/godsend-cms/node_modules/sequelize/lib/sequelize.js:300:12)
+0|godsend  |     at MySQLQueryInterface.select (/home/godsend/godsend-cms/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+0|godsend  |     at Admin.findAll (/home/godsend/godsend-cms/node_modules/sequelize/lib/model.js:1140:47)
+0|godsend  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|godsend  |     at async Admin.findOne (/home/godsend/godsend-cms/node_modules/sequelize/lib/model.js:1240:12)
+0|godsend  | 2026-03-06 20:49:55: [AUTH] Database query failed during login: ConnectionManager.getConnection was called after the connection manager was closed!
+0|godsend  | 2026-03-06 20:49:55: [AUTH] DB Error code: N/A
+0|godsend  | 2026-03-06 20:49:55: [AUTH] DB Error errno: N/A
+0|godsend  | 2026-03-06 20:49:55: [AUTH] Full error: Error: ConnectionManager.getConnection was called after the connection manager was closed!
+0|godsend  |     at ConnectionManager.getConnection (/home/godsend/godsend-cms/node_modules/sequelize/lib/dialects/abstract/connection-manager.js:70:13)
+0|godsend  |     at /home/godsend/godsend-cms/node_modules/sequelize/lib/sequelize.js:305:111
+0|godsend  |     at /home/godsend/godsend-cms/node_modules/retry-as-promised/dist/index.js:65:25
+0|godsend  |     at new Promise (<anonymous>)
+0|godsend  |     at retryAsPromised (/home/godsend/godsend-cms/node_modules/retry-as-promised/dist/index.js:54:12)
+0|godsend  |     at Sequelize.query (/home/godsend/godsend-cms/node_modules/sequelize/lib/sequelize.js:300:12)
+0|godsend  |     at MySQLQueryInterface.select (/home/godsend/godsend-cms/node_modules/sequelize/lib/dialects/abstract/query-interface.js:407:33)
+0|godsend  |     at Admin.findAll (/home/godsend/godsend-cms/node_modules/sequelize/lib/model.js:1140:47)
+0|godsend  |     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+0|godsend  |     at async Admin.findOne (/home/godsend/godsend-cms/node_modules/sequelize/lib/model.js:1240:12)
+0|godsend  | 2026-03-06 20:52:04: (node:3134) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 disconnect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | (Use `node --trace-warnings ...` to show where the warning was created)
+0|godsend  | 2026-03-06 20:52:04: (node:3134) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 connect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+
+/home/godsend/godsend-cms/logs/output.log last 30 lines:
+0|godsend  | FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:52: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+0|godsend  | 2026-03-06 20:54:53: [API] Downloading file: /personal-files/DLAC01/ARCADE/Child of Light/XBLA/5841140D/000D0000/FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 as: FB24D252BA82D6D6D2EBEE3A8B0B434A343ED9BD58 size: 1585451008
+

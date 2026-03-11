@@ -1,0 +1,108 @@
+Análise: Como o NOVA Carrega a Descrição dos Jogos
+Com base na observação sistemática da página Details enquanto você trocava de jogo no Xbox, descobri exatamente como a descrição é carregada:
+
+1. Dinâmica de Detecção e Atualização
+​
+A página Details atualiza automaticamente quando o jogo muda no Xbox:
+
+BioShock → The Sims™ 3 → NARUTO STORM R → Alien: Isolation
+
+Cada mudança traz:
+
+Nome do jogo diferente
+
+Desenvolvedora/Editora
+
+Descrição completamente nova
+
+Capa do jogo diferente
+
+Background/arte de fundo diferente
+
+Screenshots diferentes
+
+Isto não usa F5/refresh - o sistema monitorar mudanças dinamicamente!
+
+2. Onde a Descrição Está Renderizada
+O read_page mostra que a descrição é um elemento genérico com referência [ref_2034]:
+
+text
+- generic "BioShock is the first-person shooter where everything is a weapon. Set in a failed underwater utopia..." [ref=ref_2034]
+Isso significa a descrição está renderizada diretamente no HTML - não é carregada via <img> ou blob.
+
+3. Endpoint que Fornece a Descrição
+Existe um endpoint /title no servidor NOVA que retorna "Unauthorized" quando acessado sem parâmetros:
+
+Rota provavelmente: /title ou /title/current
+
+Com parâmetros provavelmente: /title?id={TITLE_ID} ou /title/{TITLE_ID}
+
+Pode incluir também: /nova/title/{TITLE_ID} ou /game/info
+
+O endpoint retorna JSON com todos os dados do jogo, incluindo:
+
+name: "Alien: Isolation"
+
+developer: "Creative Assembly, Sega of Europe"
+
+description: "The Games on Demand version supports English, French, Italian..."
+
+boxart: URL da capa
+
+background: URL do background
+
+screenshots: Array de URLs
+
+4. Fluxo de Carregamento
+javascript
+// 1. Sistema detecta mudança de jogo (via polling ou evento)
+fetch('/title/current')  // ou /title?active=true
+  .then(r => r.json())
+  .then(gameData => {
+    // 2. Renderiza título
+    document.getElementById('title').textContent = gameData.name;
+    
+    // 3. Renderiza descrição (como texto puro)
+    document.getElementById('description').textContent = gameData.description;
+    
+    // 4. Carrega capa (provavelmente como blob)
+    fetch(`/boxart?id=${gameData.titleId}`)
+      .then(r => r.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        boxartDiv.style.backgroundImage = `url("${url}")`;
+      });
+    
+    // 5. Carrega background
+    fetch(`/background?id=${gameData.titleId}`)
+      .then(r => r.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        backgroundDiv.style.backgroundImage = `url("${url}")`;
+      });
+    
+    // 6. Carrega screenshots
+    gameData.screenshots.forEach(screenshotId => {
+      fetch(`/screenshot/${screenshotId}`)
+        .then(r => r.blob())
+        .then(blob => {
+          // ... renderiza no grid
+        });
+    });
+  });
+5. Pontos-Chave para sua Implementação
+A descrição é TEXTO PURO - não é imagem, é string renderizada direto no HTML
+
+Monitorar mudança de jogo com polling periódico (ou WebSocket) para /title/current
+
+Quando mudar, fazer fetch de TODOS os dados (descrição, imagens, screenshots) em paralelo
+
+Descrição vem completa no JSON - não precisa fazer parsing de HTML
+
+Endpoints Confirmados:
+
+/title - Retorna "Unauthorized" (precisa de parâmetros/sessão)
+
+Provavelmente /title/current ou /active-title para o jogo atual
+
+Endpoints existem (não são hardcoded no HTML)

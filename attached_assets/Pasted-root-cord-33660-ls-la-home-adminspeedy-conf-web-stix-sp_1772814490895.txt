@@ -1,0 +1,47 @@
+root@cord-33660:~# ls -la /home/adminspeedy/conf/web/stix.speedygamesdownloads.com/
+total 16
+drwxr-xr-x 2 root root        4096 mar  6 13:17 .
+drwxr-x--x 3 root root        4096 mar  6 12:12 ..
+-rw-r----- 1 root adminspeedy 1875 mar  6 12:12 apache2.conf
+-rw-r----- 1 root adminspeedy 1254 mar  6 13:16 nginx.conf
+root@cord-33660:~# ^C
+root@cord-33660:~# cat /home/adminspeedy/conf/web/stix.speedygamesdownloads.com/apache2.conf
+#=========================================================================#
+# Default Web Domain Template                                             #
+# DO NOT MODIFY THIS FILE! CHANGES WILL BE LOST WHEN REBUILDING DOMAINS   #
+# https://hestiacp.com/docs/server-administration/web-templates.html      #
+#=========================================================================#
+
+<VirtualHost 148.224.62.220:8080>
+
+    ServerName stix.speedygamesdownloads.com
+
+    ServerAdmin info@stix.speedygamesdownloads.com
+    DocumentRoot /home/adminspeedy/web/stix.speedygamesdownloads.com/public_html
+    ScriptAlias /cgi-bin/ /home/adminspeedy/web/stix.speedygamesdownloads.com/cgi-bin/
+    Alias /vstats/ /home/adminspeedy/web/stix.speedygamesdownloads.com/stats/
+    Alias /error/ /home/adminspeedy/web/stix.speedygamesdownloads.com/document_errors/
+    #SuexecUserGroup adminspeedy adminspeedy
+    CustomLog /var/log/apache2/domains/stix.speedygamesdownloads.com.bytes bytes
+    CustomLog /var/log/apache2/domains/stix.speedygamesdownloads.com.log combined
+    ErrorLog /var/log/apache2/domains/stix.speedygamesdownloads.com.error.log
+
+    IncludeOptional /home/adminspeedy/conf/web/stix.speedygamesdownloads.com/apache2.forcessl.conf*
+
+    <Directory /home/adminspeedy/web/stix.speedygamesdownloads.com/stats>
+        AllowOverride All
+    </Directory>
+    <Directory /home/adminspeedy/web/stix.speedygamesdownloads.com/public_html>
+        AllowOverride All
+        Options +Includes -Indexes +ExecCGI
+    </Directory>
+
+    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/run/php/php8.3-fpm-stix.speedygamesdownloads.com.sock|fcgi://localhost"
+    </FilesMatch>
+    SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
+
+    IncludeOptional /home/adminspeedy/conf/web/stix.speedygamesdownloads.com/apache2.conf_*
+    IncludeOptional /etc/apache2/conf.d/*.inc
+</VirtualHost>
+root@cord-33660:~#

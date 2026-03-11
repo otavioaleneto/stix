@@ -1,0 +1,43 @@
+<main _ngcontent-c0="" class="m-10-col l-8-col box shadow ng-trigger ng-trigger-collapsibleAnimation">
+        
+        
+
+        
+        <!---->
+        <router-outlet _ngcontent-c0="" class="ng-tns-c0-0"></router-outlet><my-login _nghost-c4="" class=""><div _ngcontent-c4="" class="main">
+    <section _ngcontent-c4="" class="row header">
+        <img _ngcontent-c4="" class="center" src="/img/logo.nova.png">
+    </section>
+    <section _ngcontent-c4="" class="row">
+        
+        <form _ngcontent-c4="" class="row ng-untouched ng-pristine ng-invalid" name="form" novalidate="">
+            
+                <div _ngcontent-c4="" class="table l-5-col m-6-col">
+                    <label _ngcontent-c4="" for="username">Username:</label>
+                    <div _ngcontent-c4="" class="wide"><input _ngcontent-c4="" autocapitalize="off" autocorrect="off" name="username" required="" type="text" class="ng-untouched ng-pristine ng-invalid"><div data-lastpass-icon-root="" style="position: relative !important; height: 0px !important; width: 0px !important; display: initial !important; float: left !important;"></div><kpm-field-badge type="default" loading="false" menu-type="login" class="kpm_input-field-button kpm_gray-key-icon" style="--FieldBadge-ZLevel: 3 !important;" data-product-type="b2c"></kpm-field-badge></div>
+                </div>
+                <div _ngcontent-c4="" class="table l-5-col m-6-col">
+                    <label _ngcontent-c4="" for="password">Password:</label>
+                    <div _ngcontent-c4="" class="wide"><input _ngcontent-c4="" name="password" required="" type="password" class="ng-untouched ng-pristine ng-invalid"><div data-lastpass-icon-root="" style="position: relative !important; height: 0px !important; width: 0px !important; display: initial !important; float: left !important;"></div><kpm-field-badge type="default" loading="false" menu-type="login" class="kpm_input-field-button kpm_gray-key-icon" style="--FieldBadge-ZLevel: 3 !important;" data-product-type="b2c"></kpm-field-badge></div>
+                </div>
+                
+                <div _ngcontent-c4="" class="table button l-2-col m-12-col">
+                    <button _ngcontent-c4="">Login</button>
+                </div>
+        </form>
+        <div _ngcontent-c4="" class="status s-12-col">
+            <!----><div _ngcontent-c4="" class="error">Logged out</div>
+            <!---->
+            <!---->
+            <!---->
+            <!---->
+        </div>
+    </section>
+
+    <!---->
+    
+</div>
+</my-login>
+        
+        
+    </main>

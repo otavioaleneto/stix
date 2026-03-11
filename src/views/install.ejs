@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - Instalacao</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 300: '#86efac', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full">
+  <div class="min-h-full flex flex-col items-center justify-center py-12 px-4">
+    <div class="w-full max-w-2xl">
+      <div class="text-center mb-8">
+        <div class="mx-auto h-20 w-20 rounded-2xl bg-brand-600 flex items-center justify-center">
+          <svg class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 6.087c0-.355.186-.676.401-.959.221-.29.349-.634.349-1.003 0-1.036-1.007-1.875-2.25-1.875s-2.25.84-2.25 1.875c0 .369.128.713.349 1.003.215.283.401.604.401.959v0a.64.64 0 01-.657.643 48.39 48.39 0 01-4.163-.3c.186 1.613.293 3.25.315 4.907a.656.656 0 01-.658.663v0c-.355 0-.676-.186-.959-.401a1.647 1.647 0 00-1.003-.349c-1.036 0-1.875 1.007-1.875 2.25s.84 2.25 1.875 2.25c.369 0 .713-.128 1.003-.349.283-.215.604-.401.959-.401v0c.31 0 .555.26.532.57a48.039 48.039 0 01-.642 5.056c1.518.19 3.058.309 4.616.354a.64.64 0 00.657-.643v0c0-.355-.186-.676-.401-.959a1.647 1.647 0 01-.349-1.003c0-1.035 1.008-1.875 2.25-1.875 1.243 0 2.25.84 2.25 1.875 0 .369-.128.713-.349 1.003-.215.283-.401.604-.401.959v0c0 .333.277.599.61.58a48.1 48.1 0 005.427-.63 48.05 48.05 0 00.582-4.717.532.532 0 00-.533-.57v0c-.355 0-.676.186-.959.401-.29.221-.634.349-1.003.349-1.035 0-1.875-1.007-1.875-2.25s.84-2.25 1.875-2.25c.37 0 .713.128 1.003.349.283.215.604.401.959.401v0a.656.656 0 00.658-.663 48.422 48.422 0 00-.37-5.36c-1.886.342-3.81.574-5.766.689a.578.578 0 01-.61-.58v0z" />
+          </svg>
+        </div>
+        <h1 class="mt-6 text-3xl font-bold text-white">GODSend CMS</h1>
+        <p class="mt-2 text-gray-400">Assistente de Instalacao</p>
+      </div>
+
+      <div id="steps-indicator" class="flex items-center justify-center gap-2 mb-8">
+        <div id="step-dot-1" class="h-3 w-3 rounded-full bg-brand-500"></div>
+        <div class="h-px w-8 bg-gray-700"></div>
+        <div id="step-dot-2" class="h-3 w-3 rounded-full bg-gray-600"></div>
+        <div class="h-px w-8 bg-gray-700"></div>
+        <div id="step-dot-3" class="h-3 w-3 rounded-full bg-gray-600"></div>
+        <div class="h-px w-8 bg-gray-700"></div>
+        <div id="step-dot-4" class="h-3 w-3 rounded-full bg-gray-600"></div>
+      </div>
+
+      <div id="alert-box" class="hidden mb-6 rounded-lg p-4 border"></div>
+
+      <!-- STEP 1: Permissoes -->
+      <div id="step-1" class="space-y-6">
+        <div class="rounded-xl bg-gray-800/50 p-6 border border-gray-700/50">
+          <h2 class="text-xl font-semibold text-white mb-1">Verificacao do Servidor</h2>
+          <p class="text-sm text-gray-400 mb-6">Verificando permissoes de pastas e escrita no servidor</p>
+
+          <div id="perm-results" class="space-y-2">
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-700/30">
+              <div class="h-5 w-5 rounded-full bg-gray-600 animate-pulse"></div>
+              <p class="text-sm text-gray-400">Clique em "Verificar" para iniciar...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="checkPermissions()" id="btn-check-perm" class="flex-1 rounded-lg bg-gray-700 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-600 transition-colors">
+            Verificar Permissoes
+          </button>
+          <button onclick="goToStep(2)" id="btn-next-perm" disabled class="flex-1 rounded-lg bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Proximo
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Banco de Dados -->
+      <div id="step-2" class="hidden space-y-6">
+        <div class="rounded-xl bg-gray-800/50 p-6 border border-gray-700/50">
+          <h2 class="text-xl font-semibold text-white mb-1">Banco de Dados</h2>
+          <p class="text-sm text-gray-400 mb-6">Configure a conexao com seu banco de dados</p>
+
+          <% if (hasDbUrl) { %>
+          <div class="rounded-lg bg-brand-900/30 border border-brand-500/30 p-4 mb-4">
+            <p class="text-sm text-brand-300">DATABASE_URL detectada automaticamente. A conexao ja esta configurada.</p>
+          </div>
+          <input type="hidden" id="db-use-url" value="true">
+          <% } else { %>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Tipo do Banco</label>
+              <select id="db-dialect" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white focus:ring-2 focus:ring-brand-500 sm:text-sm">
+                <option value="mysql">MySQL / MariaDB</option>
+                <option value="postgres">PostgreSQL</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+              <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-300 mb-1">Host</label>
+                <input id="db-host" type="text" value="localhost" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Porta</label>
+                <input id="db-port" type="text" value="3306" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Nome do Banco</label>
+              <input id="db-name" type="text" value="godsend" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Usuario</label>
+                <input id="db-user" type="text" value="root" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+                <input id="db-pass" type="password" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-700">
+              <label class="block text-sm font-medium text-gray-400 mb-1">Ou use uma URL de conexao (opcional)</label>
+              <input id="db-url" type="text" placeholder="mysql://user:pass@host:3306/dbname" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-500 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+            </div>
+          </div>
+          <% } %>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="goToStep(1)" class="rounded-lg bg-gray-700 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-600 transition-colors">
+            Voltar
+          </button>
+          <button onclick="testConnection()" id="btn-test" class="flex-1 rounded-lg bg-gray-700 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-600 transition-colors">
+            Testar Conexao
+          </button>
+          <button onclick="goToStep(3)" id="btn-next-db" disabled class="flex-1 rounded-lg bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            Proximo
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Status + Admin -->
+      <div id="step-3" class="hidden space-y-6">
+        <div class="rounded-xl bg-gray-800/50 p-6 border border-gray-700/50">
+          <h2 class="text-xl font-semibold text-white mb-1">Status do Banco</h2>
+          <p class="text-sm text-gray-400 mb-6">Resultado da verificacao</p>
+
+          <div id="db-status" class="space-y-3"></div>
+        </div>
+
+        <div id="admin-form-section" class="hidden rounded-xl bg-gray-800/50 p-6 border border-gray-700/50">
+          <h2 class="text-xl font-semibold text-white mb-1">Criar Administrador</h2>
+          <p class="text-sm text-gray-400 mb-6">Configure o administrador principal do sistema</p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Usuario</label>
+              <input id="admin-username" type="text" value="admin" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+              <input id="admin-email" type="email" value="admin@godsend.local" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Senha</label>
+              <input id="admin-password" type="password" placeholder="Minimo 6 caracteres" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300 mb-1">Confirmar Senha</label>
+              <input id="admin-password-confirm" type="password" class="block w-full rounded-lg border-0 bg-gray-700 px-4 py-3 text-white placeholder-gray-400 focus:ring-2 focus:ring-brand-500 sm:text-sm">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button onclick="goToStep(2)" class="rounded-lg bg-gray-700 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-600 transition-colors">
+            Voltar
+          </button>
+          <button onclick="runSetup()" id="btn-install" class="flex-1 rounded-lg bg-brand-600 px-4 py-3 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">
+            Instalar / Atualizar
+          </button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Concluido -->
+      <div id="step-4" class="hidden space-y-6">
+        <div class="rounded-xl bg-gray-800/50 p-6 border border-gray-700/50 text-center">
+          <div class="mx-auto h-16 w-16 rounded-full bg-brand-600/20 flex items-center justify-center mb-4">
+            <svg class="h-8 w-8 text-brand-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 class="text-xl font-semibold text-white mb-2">Instalacao Completa!</h2>
+          <p id="setup-result-msg" class="text-gray-400 mb-6"></p>
+          <a href="/login" class="inline-block rounded-lg bg-brand-600 px-8 py-3 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">
+            Ir para o Login
+          </a>
+        </div>
+      </div>
+
+      <% if (installed) { %>
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-500">Sistema ja instalado.</p>
+        <a href="/login" class="text-sm text-brand-400 hover:text-brand-300">Ir para o Login</a>
+      </div>
+      <% } %>
+    </div>
+  </div>
+
+  <script>
+    let dbTestResult = null;
+    const totalSteps = 4;
+
+    function showAlert(msg, type) {
+      const box = document.getElementById('alert-box');
+      box.className = 'mb-6 rounded-lg p-4 border';
+      if (type === 'success') {
+        box.className += ' bg-brand-900/30 border-brand-500/30 text-brand-300';
+      } else if (type === 'error') {
+        box.className += ' bg-red-900/30 border-red-500/30 text-red-300';
+      } else {
+        box.className += ' bg-blue-900/30 border-blue-500/30 text-blue-300';
+      }
+      box.textContent = msg;
+      box.classList.remove('hidden');
+    }
+
+    function hideAlert() {
+      document.getElementById('alert-box').classList.add('hidden');
+    }
+
+    function goToStep(n) {
+      hideAlert();
+      for (let i = 1; i <= totalSteps; i++) {
+        document.getElementById('step-' + i).classList.toggle('hidden', i !== n);
+        const dot = document.getElementById('step-dot-' + i);
+        if (i <= n) {
+          dot.className = 'h-3 w-3 rounded-full bg-brand-500';
+        } else {
+          dot.className = 'h-3 w-3 rounded-full bg-gray-600';
+        }
+      }
+
+      if (n === 3) {
+        renderStep3();
+      }
+    }
+
+    async function checkPermissions() {
+      const btn = document.getElementById('btn-check-perm');
+      btn.textContent = 'Verificando...';
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/install/check-permissions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        const contentType = resp.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          showAlert('Erro no servidor (HTTP ' + resp.status + '). Verifique os logs do Node.js.', 'error');
+          btn.textContent = 'Verificar Permissoes';
+          btn.disabled = false;
+          return;
+        }
+
+        const data = await resp.json();
+
+        const container = document.getElementById('perm-results');
+        let html = '';
+
+        for (const check of data.checks) {
+          let iconColor, bgColor, borderColor, textColor, statusText;
+
+          if (check.status === 'ok' || check.status === 'created') {
+            iconColor = 'text-brand-400';
+            bgColor = 'bg-brand-900/20';
+            borderColor = 'border-brand-500/20';
+            textColor = 'text-brand-300';
+            statusText = check.status === 'created' ? 'Criada automaticamente' : 'OK';
+          } else if (check.status === 'no-write') {
+            iconColor = 'text-red-400';
+            bgColor = 'bg-red-900/20';
+            borderColor = 'border-red-500/20';
+            textColor = 'text-red-300';
+            statusText = 'Sem permissao de escrita';
+          } else {
+            iconColor = 'text-red-400';
+            bgColor = 'bg-red-900/20';
+            borderColor = 'border-red-500/20';
+            textColor = 'text-red-300';
+            statusText = 'Pasta nao encontrada';
+          }
+
+          const icon = (check.status === 'ok' || check.status === 'created')
+            ? '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
+            : '<path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />';
+
+          html += '<div class="flex items-center justify-between p-3 rounded-lg ' + bgColor + ' border ' + borderColor + '">';
+          html += '<div class="flex items-center gap-3">';
+          html += '<svg class="h-5 w-5 ' + iconColor + ' shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">' + icon + '</svg>';
+          html += '<span class="text-sm font-medium ' + textColor + '">' + check.label + '</span>';
+          html += '</div>';
+          html += '<span class="text-xs ' + textColor + '">' + statusText + '</span>';
+          html += '</div>';
+
+          if (check.error && (check.status === 'no-write' || check.status === 'missing')) {
+            html += '<div class="ml-8 mt-1 mb-2 text-xs text-red-400">';
+            html += 'Solucao: No cPanel, va em Gerenciador de Arquivos, clique com botao direito na pasta e defina permissoes para 775 ou 777.';
+            html += '</div>';
+          }
+        }
+
+        html += '<div class="flex items-center justify-between p-3 rounded-lg ' +
+          (data.envWritable ? 'bg-brand-900/20 border border-brand-500/20' : 'bg-yellow-900/20 border border-yellow-500/20') + '">';
+        html += '<div class="flex items-center gap-3">';
+        const envIcon = data.envWritable
+          ? '<path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
+          : '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />';
+        html += '<svg class="h-5 w-5 ' + (data.envWritable ? 'text-brand-400' : 'text-yellow-400') + ' shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">' + envIcon + '</svg>';
+        html += '<span class="text-sm font-medium ' + (data.envWritable ? 'text-brand-300' : 'text-yellow-300') + '">Arquivo .env</span>';
+        html += '</div>';
+        html += '<span class="text-xs ' + (data.envWritable ? 'text-brand-300' : 'text-yellow-300') + '">' + (data.envWritable ? 'Gravavel' : 'Configure manualmente') + '</span>';
+        html += '</div>';
+
+        container.innerHTML = html;
+
+        if (data.allOk) {
+          showAlert('Todas as permissoes estao corretas!', 'success');
+          document.getElementById('btn-next-perm').disabled = false;
+        } else {
+          showAlert('Algumas pastas precisam de ajuste de permissoes. Veja os detalhes acima. Voce pode continuar, mas algumas funcoes podem nao funcionar.', 'error');
+          document.getElementById('btn-next-perm').disabled = false;
+        }
+      } catch (err) {
+        showAlert('Erro ao verificar: ' + err.message, 'error');
+      }
+
+      btn.textContent = 'Verificar Permissoes';
+      btn.disabled = false;
+    }
+
+    function getDbConfig() {
+      const hasDbUrl = document.getElementById('db-use-url');
+      if (hasDbUrl) {
+        return { databaseUrl: '__env__' };
+      }
+      const urlField = document.getElementById('db-url');
+      if (urlField && urlField.value.trim()) {
+        return { databaseUrl: urlField.value.trim() };
+      }
+      return {
+        dbDialect: document.getElementById('db-dialect').value,
+        dbHost: document.getElementById('db-host').value,
+        dbPort: document.getElementById('db-port').value,
+        dbName: document.getElementById('db-name').value,
+        dbUser: document.getElementById('db-user').value,
+        dbPass: document.getElementById('db-pass').value
+      };
+    }
+
+    async function testConnection() {
+      const btn = document.getElementById('btn-test');
+      btn.textContent = 'Testando...';
+      btn.disabled = true;
+      hideAlert();
+
+      try {
+        const config = getDbConfig();
+        const resp = await fetch('/install/test-db', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(config)
+        });
+
+        const contentType = resp.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          if (resp.status === 403) {
+            showAlert('Sistema ja instalado. Faca login como super_admin e acesse /install novamente.', 'error');
+          } else {
+            showAlert('Erro no servidor (resposta inesperada HTTP ' + resp.status + '). Verifique os logs do Node.js.', 'error');
+          }
+          btn.textContent = 'Testar Conexao';
+          btn.disabled = false;
+          return;
+        }
+
+        const data = await resp.json();
+        dbTestResult = data;
+
+        if (data.success) {
+          showAlert(data.message, 'success');
+          document.getElementById('btn-next-db').disabled = false;
+        } else {
+          showAlert(data.message, 'error');
+          document.getElementById('btn-next-db').disabled = true;
+        }
+      } catch (err) {
+        showAlert('Erro ao testar: ' + err.message, 'error');
+      }
+
+      btn.textContent = 'Testar Conexao';
+      btn.disabled = false;
+    }
+
+    function renderStep3() {
+      const statusDiv = document.getElementById('db-status');
+      const adminSection = document.getElementById('admin-form-section');
+
+      if (dbTestResult && dbTestResult.success) {
+        let html = '';
+        if (dbTestResult.hasData) {
+          html += '<div class="flex items-center gap-3 p-3 rounded-lg bg-blue-900/20 border border-blue-500/20">';
+          html += '<svg class="h-5 w-5 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375" /></svg>';
+          html += '<div>';
+          html += '<p class="text-sm font-medium text-blue-300">Banco de dados existente detectado</p>';
+          html += '<p class="text-xs text-blue-400">' + dbTestResult.tables + ' tabelas encontradas. O sistema sera atualizado automaticamente.</p>';
+          html += '</div></div>';
+
+          if (dbTestResult.hasAdmins) {
+            html += '<div class="flex items-center gap-3 p-3 rounded-lg bg-brand-900/20 border border-brand-500/20">';
+            html += '<svg class="h-5 w-5 text-brand-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+            html += '<div>';
+            html += '<p class="text-sm font-medium text-brand-300">Admin(s) existente(s) mantido(s)</p>';
+            html += '<p class="text-xs text-brand-400">O sistema ja possui administradores cadastrados.</p>';
+            html += '</div></div>';
+            adminSection.classList.add('hidden');
+          } else {
+            adminSection.classList.remove('hidden');
+          }
+        } else {
+          html += '<div class="flex items-center gap-3 p-3 rounded-lg bg-yellow-900/20 border border-yellow-500/20">';
+          html += '<svg class="h-5 w-5 text-yellow-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" /></svg>';
+          html += '<div>';
+          html += '<p class="text-sm font-medium text-yellow-300">Instalacao limpa</p>';
+          html += '<p class="text-xs text-yellow-400">Nenhuma tabela encontrada. Todas as tabelas serao criadas.</p>';
+          html += '</div></div>';
+          adminSection.classList.remove('hidden');
+        }
+
+        statusDiv.innerHTML = html;
+      }
+    }
+
+    async function runSetup() {
+      const btn = document.getElementById('btn-install');
+      btn.textContent = 'Instalando...';
+      btn.disabled = true;
+      hideAlert();
+
+      const needsAdmin = !document.getElementById('admin-form-section').classList.contains('hidden');
+
+      if (needsAdmin) {
+        const pw = document.getElementById('admin-password').value;
+        const pwConfirm = document.getElementById('admin-password-confirm').value;
+        const username = document.getElementById('admin-username').value;
+
+        if (!username || username.length < 3) {
+          showAlert('Usuario deve ter no minimo 3 caracteres.', 'error');
+          btn.textContent = 'Instalar / Atualizar';
+          btn.disabled = false;
+          return;
+        }
+        if (!pw || pw.length < 6) {
+          showAlert('Senha deve ter no minimo 6 caracteres.', 'error');
+          btn.textContent = 'Instalar / Atualizar';
+          btn.disabled = false;
+          return;
+        }
+        if (pw !== pwConfirm) {
+          showAlert('As senhas nao conferem.', 'error');
+          btn.textContent = 'Instalar / Atualizar';
+          btn.disabled = false;
+          return;
+        }
+      }
+
+      try {
+        const config = getDbConfig();
+        const body = { ...config };
+
+        if (needsAdmin) {
+          body.adminUsername = document.getElementById('admin-username').value;
+          body.adminEmail = document.getElementById('admin-email').value;
+          body.adminPassword = document.getElementById('admin-password').value;
+        }
+
+        const resp = await fetch('/install/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+
+        const contentType = resp.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
+          showAlert('Erro no servidor (HTTP ' + resp.status + '). Verifique os logs do Node.js para mais detalhes.', 'error');
+          btn.textContent = 'Instalar / Atualizar';
+          btn.disabled = false;
+          return;
+        }
+
+        const data = await resp.json();
+
+        if (data.success) {
+          let msg = data.message;
+          if (data.needsRestart) {
+            msg += '\n\nATENCAO: Reinicie o servidor Node.js antes de fazer login.\nNo cPanel, va em "Setup Node.js App" e clique em "Restart".';
+          }
+          document.getElementById('setup-result-msg').textContent = msg;
+          if (data.needsRestart) {
+            const restartWarn = document.createElement('div');
+            restartWarn.className = 'mt-4 p-4 rounded-lg bg-yellow-900/20 border border-yellow-500/20';
+            restartWarn.innerHTML = '<p class="text-sm font-medium text-yellow-300">Reinicie o servidor</p><p class="text-xs text-yellow-400 mt-1">O servidor precisa ser reiniciado para aplicar as novas configuracoes do banco de dados. No cPanel, va em "Setup Node.js App" e clique em "Restart".</p>';
+            document.getElementById('setup-result-msg').parentNode.appendChild(restartWarn);
+          }
+          goToStep(4);
+        } else {
+          showAlert(data.message, 'error');
+        }
+      } catch (err) {
+        showAlert('Erro: ' + err.message, 'error');
+      }
+
+      btn.textContent = 'Instalar / Atualizar';
+      btn.disabled = false;
+    }
+
+    const dialectSelect = document.getElementById('db-dialect');
+    if (dialectSelect) {
+      dialectSelect.addEventListener('change', function() {
+        const portField = document.getElementById('db-port');
+        portField.value = this.value === 'mysql' ? '3306' : '5432';
+      });
+    }
+  </script>
+</body>
+</html>

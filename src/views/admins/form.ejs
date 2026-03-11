@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-gray-900">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GODSend - <%= title %></title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{colors:{brand:{50:'#f0fdf4',100:'#dcfce7',200:'#bbf7d0',300:'#86efac',400:'#4ade80',500:'#22c55e',600:'#16a34a',700:'#15803d',800:'#166534',900:'#14532d'}}}}}</script>
+</head>
+<body class="h-full">
+  <%- include('../partials/sidebar') %>
+  <div class="lg:pl-64 min-h-full sidebar-content-area">
+    <%- include('../partials/navbar') %>
+    <main class="p-4 sm:p-6 lg:p-8">
+
+      <div class="mb-6">
+        <a href="/admins" class="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white transition-colors">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" /></svg>
+          Voltar
+        </a>
+      </div>
+
+      <% if (error) { %>
+      <div class="mb-6 rounded-lg bg-red-900/50 border border-red-500/50 p-4">
+        <p class="text-sm text-red-300"><%= error %></p>
+      </div>
+      <% } %>
+
+      <form action="<%= adminData && adminData.id ? '/admins/' + adminData.id : '/admins' %>" method="POST" class="max-w-lg">
+        <div class="rounded-xl bg-gray-800 border border-gray-700 p-6 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Usuário</label>
+            <input type="text" name="username" value="<%= adminData ? adminData.username : '' %>" required
+              class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white focus:ring-2 focus:ring-brand-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+            <input type="email" name="email" value="<%= adminData ? adminData.email : '' %>" required
+              class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white focus:ring-2 focus:ring-brand-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Senha<%= adminData && adminData.id ? ' (deixe em branco para manter)' : '' %></label>
+            <input type="password" name="password" <%= adminData && adminData.id ? '' : 'required' %>
+              class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white focus:ring-2 focus:ring-brand-500 text-sm">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-300 mb-1">Cargo</label>
+            <select name="role" class="w-full rounded-lg bg-gray-700 border border-gray-600 px-4 py-2.5 text-white focus:ring-2 focus:ring-brand-500 text-sm">
+              <% if (typeof roles !== 'undefined' && roles.length > 0) { %>
+                <% roles.forEach(r => { %>
+                <option value="<%= r.name %>" <%= adminData && adminData.role === r.name ? 'selected' : '' %>><%= r.name %><%= r.description ? ' - ' + r.description : '' %></option>
+                <% }) %>
+              <% } else { %>
+                <option value="super_admin" <%= adminData && adminData.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
+                <option value="admin" <%= adminData && adminData.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                <option value="editor" <%= adminData && adminData.role === 'editor' ? 'selected' : '' %>>Editor</option>
+              <% } %>
+            </select>
+          </div>
+          <% if (adminData && adminData.id) { %>
+          <div class="flex items-center gap-2">
+            <input type="checkbox" name="active" id="active" class="rounded bg-gray-700 border-gray-600 text-brand-600 focus:ring-brand-500" <%= adminData.active ? 'checked' : '' %>>
+            <label for="active" class="text-sm text-gray-300">Ativo</label>
+          </div>
+          <% } %>
+        </div>
+
+        <div class="mt-4 flex items-center gap-3">
+          <button type="submit" class="rounded-lg bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-500 transition-colors">
+            <%= adminData && adminData.id ? 'Salvar' : 'Criar Admin' %>
+          </button>
+          <a href="/admins" class="rounded-lg bg-gray-700 px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-600 transition-colors">Cancelar</a>
+        </div>
+      </form>
+
+    </main>
+  </div>
+</body>
+</html>

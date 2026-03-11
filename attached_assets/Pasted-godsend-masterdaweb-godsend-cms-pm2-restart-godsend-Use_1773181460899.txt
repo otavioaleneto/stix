@@ -1,0 +1,161 @@
+godsend@masterdaweb:~/godsend-cms$ pm2 restart godsend
+Use --update-env to update environment variables
+[PM2] Applying action restartProcessId on app [godsend](ids: [ 0 ])
+[PM2] [godsend](0) ✓
+┌────┬────────────────────┬──────────┬──────┬───────────┬──────────┬──────────┐
+│ id │ name               │ mode     │ ↺    │ status    │ cpu      │ memory   │
+├────┼────────────────────┼──────────┼──────┼───────────┼──────────┼──────────┤
+│ 0  │ godsend            │ cluster  │ 84   │ online    │ 0%       │ 37.7mb   │
+└────┴────────────────────┴──────────┴──────┴───────────┴──────────┴──────────┘
+godsend@masterdaweb:~/godsend-cms$ pm2 logs godsend --lines 30
+[TAILING] Tailing last 30 lines for [godsend] process (change the value with --lines option)
+/home/godsend/godsend-cms/logs/error.log last 30 lines:
+0|godsend  |     178|                 <% } %>
+0|godsend  |     179|                 <span>IP: <%= dl.clientIp %></span>
+0|godsend  |     180|                 <% if (dl.external) { %>
+0|godsend  |
+0|godsend  | formatElapsed is not defined
+0|godsend  |     at eval ("/home/godsend/godsend-cms/src/views/downloads/index.ejs":125:7)
+0|godsend  |     at Array.forEach (<anonymous>)
+0|godsend  |     at eval ("/home/godsend/godsend-cms/src/views/downloads/index.ejs":60:24)
+0|godsend  |     at index (/home/godsend/godsend-cms/node_modules/ejs/lib/cjs/ejs.js:643:23)
+0|godsend  |     at tryHandleCache (/home/godsend/godsend-cms/node_modules/ejs/lib/cjs/ejs.js:254:42)
+0|godsend  |     at ejs.renderFile [as engine] (/home/godsend/godsend-cms/node_modules/ejs/lib/cjs/ejs.js:447:12)
+0|godsend  |     at View.render (/home/godsend/godsend-cms/node_modules/express/lib/view.js:139:8)
+0|godsend  |     at tryRender (/home/godsend/godsend-cms/node_modules/express/lib/application.js:627:10)
+0|godsend  |     at Function.render (/home/godsend/godsend-cms/node_modules/express/lib/application.js:574:3)
+0|godsend  |     at ServerResponse.render (/home/godsend/godsend-cms/node_modules/express/lib/response.js:923:7)
+0|godsend  | 2026-03-10 14:32:07: (node:6588) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 disconnect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | (Use `node --trace-warnings ...` to show where the warning was created)
+0|godsend  | 2026-03-10 14:32:07: (node:6588) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 connect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | 2026-03-10 15:46:25: (node:8125) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 disconnect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | (Use `node --trace-warnings ...` to show where the warning was created)
+0|godsend  | 2026-03-10 15:46:25: (node:8125) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 connect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | 2026-03-10 17:45:32: (node:10080) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 disconnect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | (Use `node --trace-warnings ...` to show where the warning was created)
+0|godsend  | 2026-03-10 17:45:32: (node:10080) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 connect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | 2026-03-10 18:18:01: (node:10429) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 disconnect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | (Use `node --trace-warnings ...` to show where the warning was created)
+0|godsend  | 2026-03-10 18:18:01: (node:10429) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 connect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | 2026-03-10 18:37:24: (node:10895) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 disconnect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+0|godsend  | (Use `node --trace-warnings ...` to show where the warning was created)
+0|godsend  | 2026-03-10 18:37:24: (node:10895) MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 connect listeners added to [SequelizeStore]. MaxListeners is 10. Use emitter.setMaxListeners() to increase limit
+
+/home/godsend/godsend-cms/logs/output.log last 30 lines:
+0|godsend  | 2026-03-10 19:20:00: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:20:01: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+0|godsend  | 2026-03-10 19:20:01: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+0|godsend  | 2026-03-10 19:20:02: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+0|godsend  | 2026-03-10 19:20:03: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:20:04: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 19:20:04: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+0|godsend  | 2026-03-10 19:20:05: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 19:20:06: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+0|godsend  | 2026-03-10 19:20:06: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:20:07: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+0|godsend  | 2026-03-10 19:20:08: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+0|godsend  | 2026-03-10 19:20:09: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+0|godsend  | 2026-03-10 19:20:09: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+0|godsend  | 2026-03-10 19:20:10: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:20:11: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 19:23:51: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 19:23:51: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 19:23:52: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+0|godsend  | 2026-03-10 19:23:53: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+0|godsend  | 2026-03-10 19:23:54: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent building .env in docker: https://dotenvx.com/prebuild
+0|godsend  | 2026-03-10 19:23:54: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:23:55: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🤖 agentic secret storage: https://dotenvx.com/as2
+0|godsend  | 2026-03-10 19:23:56: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+0|godsend  | 2026-03-10 19:23:57: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:23:57: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+0|godsend  | 2026-03-10 19:23:58: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  enable debug logging with { debug: true }
+0|godsend  | 2026-03-10 19:23:59: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:24:00: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚡️ secrets for agents: https://dotenvx.com/as2
+0|godsend  | 2026-03-10 19:24:00: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+0|godsend  | 2026-03-10 19:24:01: [DB] Config: dialect=mysql host=localhost:3306 database=godsend user=godsend_user
+0|godsend  | Error: Cannot find module '@google/generative-ai'
+0|godsend  | Require stack:
+0|godsend  | - /home/godsend/godsend-cms/src/services/geminiService.js
+0|godsend  | - /home/godsend/godsend-cms/src/controllers/gamesController.js
+0|godsend  | - /home/godsend/godsend-cms/src/routes/games.js
+0|godsend  | - /home/godsend/godsend-cms/src/app.js
+0|godsend  |     at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+0|godsend  |     at require (node:internal/modules/helpers:182:18)
+0|godsend  |     at Object.<anonymous> (/home/godsend/godsend-cms/src/services/geminiService.js:1:32)
+0|godsend  |     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+0|godsend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+0|godsend  |     at Module.load (node:internal/modules/cjs/loader:1266:32)
+0|godsend  |     at Module._load (node:internal/modules/cjs/loader:1091:12)
+0|godsend  |     at Module.require (node:internal/modules/cjs/loader:1289:19)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+0|godsend  | 2026-03-10 19:24:01: [dotenv@17.3.1] injecting env (9) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+0|godsend  | 2026-03-10 19:24:01: [GODSend] Starting up...
+0|godsend  | 2026-03-10 19:24:01: [GODSend] Node.js v20.20.1
+0|godsend  | 2026-03-10 19:24:01: [GODSend] Working directory: /home/godsend/godsend-cms
+0|godsend  | 2026-03-10 19:24:01: [STARTUP] .env file: found
+0|godsend  | 2026-03-10 19:24:01: [STARTUP] DB config: {
+0|godsend  |   DATABASE_URL: '(not set)',
+0|godsend  |   DB_DIALECT: 'mysql',
+0|godsend  |   DB_HOST: 'localhost',
+0|godsend  |   DB_PORT: '3306',
+0|godsend  |   DB_NAME: 'godsend',
+0|godsend  |   DB_USER: 'godsend_user',
+0|godsend  |   DB_PASS: '(set)',
+0|godsend  |   API_OPEN_ACCESS: 'true',
+0|godsend  |   FORCE_HTTPS: 'false',
+0|godsend  |   SESSION_SECRET: '(set)'
+0|godsend  | }
+0|godsend  | 2026-03-10 19:24:01: [DB] Config: dialect=mysql host=localhost:3306 database=godsend user=godsend_user
+0|godsend  | Error: Cannot find module '@google/generative-ai'
+0|godsend  | Require stack:
+0|godsend  | - /home/godsend/godsend-cms/src/services/geminiService.js
+0|godsend  | - /home/godsend/godsend-cms/src/controllers/gamesController.js
+0|godsend  | - /home/godsend/godsend-cms/src/routes/games.js
+0|godsend  | - /home/godsend/godsend-cms/src/app.js
+0|godsend  |     at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+0|godsend  |     at require (node:internal/modules/helpers:182:18)
+0|godsend  |     at Object.<anonymous> (/home/godsend/godsend-cms/src/services/geminiService.js:1:32)
+0|godsend  |     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+0|godsend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+0|godsend  |     at Module.load (node:internal/modules/cjs/loader:1266:32)
+0|godsend  |     at Module._load (node:internal/modules/cjs/loader:1091:12)
+0|godsend  |     at Module.require (node:internal/modules/cjs/loader:1289:19)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+0|godsend  | 2026-03-10 19:24:02: [dotenv@17.3.1] injecting env (9) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+0|godsend  | 2026-03-10 19:24:02: [GODSend] Starting up...
+0|godsend  | 2026-03-10 19:24:02: [GODSend] Node.js v20.20.1
+0|godsend  | 2026-03-10 19:24:02: [GODSend] Working directory: /home/godsend/godsend-cms
+0|godsend  | 2026-03-10 19:24:02: [STARTUP] .env file: found
+0|godsend  | 2026-03-10 19:24:02: [STARTUP] DB config: {
+0|godsend  |   DATABASE_URL: '(not set)',
+0|godsend  |   DB_DIALECT: 'mysql',
+0|godsend  |   DB_HOST: 'localhost',
+0|godsend  |   DB_PORT: '3306',
+0|godsend  |   DB_NAME: 'godsend',
+0|godsend  |   DB_USER: 'godsend_user',
+0|godsend  |   DB_PASS: '(set)',
+0|godsend  |   API_OPEN_ACCESS: 'true',
+0|godsend  |   FORCE_HTTPS: 'false',
+0|godsend  |   SESSION_SECRET: '(set)'
+0|godsend  | }
+0|godsend  | 2026-03-10 19:24:02: [DB] Config: dialect=mysql host=localhost:3306 database=godsend user=godsend_user
+0|godsend  | Error: Cannot find module '@google/generative-ai'
+0|godsend  | Require stack:
+0|godsend  | - /home/godsend/godsend-cms/src/services/geminiService.js
+0|godsend  | - /home/godsend/godsend-cms/src/controllers/gamesController.js
+0|godsend  | - /home/godsend/godsend-cms/src/routes/games.js
+0|godsend  | - /home/godsend/godsend-cms/src/app.js
+0|godsend  |     at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+0|godsend  |     at require (node:internal/modules/helpers:182:18)
+0|godsend  |     at Object.<anonymous> (/home/godsend/godsend-cms/src/services/geminiService.js:1:32)
+0|godsend  |     at Module._compile (node:internal/modules/cjs/loader:1521:14)
+0|godsend  |     at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+0|godsend  |     at Module.load (node:internal/modules/cjs/loader:1266:32)
+0|godsend  |     at Module._load (node:internal/modules/cjs/loader:1091:12)
+0|godsend  |     at Module.require (node:internal/modules/cjs/loader:1289:19)
+0|godsend  |     at Hook._require.Module.require (/usr/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:101:39)
+

@@ -1,0 +1,25 @@
+1. Erro de Permissão de Pastas (EACCES: permission denied)
+O Problema: O sistema GodSend usa uma biblioteca chamada multer para gerenciar o upload de imagens dos jogos. No código original, havia uma instrução que verificava se a pasta src/public/uploads existia e, se não, tentava criá-la automaticamente usando fs.mkdirSync.
+
+Em hospedagens compartilhadas (como cPanel), o usuário que executa o Node.js geralmente não tem permissão para criar pastas diretamente via código na raiz do servidor. Quando o sistema tentava criar essa pasta e recebia um "Acesso Negado", ele travava completamente e não deixava o site nem carregar (Gerando o erro 503 ou erro de inicialização).
+
+A Solução:
+
+Tratamento de Erros (Try-Catch): Modifiquei o arquivo src/middleware/upload.js envolvendo a criação da pasta em um bloco try-catch. Agora, se o servidor negar a criação da pasta, o sistema apenas emite um aviso no log e continua funcionando, em vez de travar o site todo.
+Preparação no ZIP: Incluí a pasta uploads vazia direto no arquivo .zip. Assim, o servidor já encontra a estrutura pronta e não precisa tentar criá-la.
+Permissão Manual (775/777): Como o servidor não criou a pasta, às vezes ele não se sente "dono" dela para gravar arquivos dentro. Por isso, a recomendação de dar a permissão 775 ou 777 pelo Gerenciador de Arquivos do cPanel garante que o Node.js consiga salvar as fotos dos jogos lá dentro.
+2. Erro de Login ("Erro interno do servidor")
+O Problema: Este erro era mais "silencioso" porque o site carregava a página de login, mas falhava ao processar os dados. Houve dois fatores principais aqui:
+
+Divergência de Nomes no .env: Nas primeiras instruções, usei o nome DB_TYPE=mysql, mas o código original do sistema esperava DB_DIALECT. Se essa variável estivesse errada, o sistema não sabia como "falar" com o banco de dados.
+Segurança de Sessão (Cookies/SSL): Em modo de "Produção", o Node.js tenta criar cookies de sessão seguros que só funcionam em sites com HTTPS. Se o seu domínio ainda não tivesse SSL ativo, o navegador bloqueava o login por segurança, resultando em um erro genérico de servidor.
+Privilégios do Banco: Se o usuário que você criou no cPanel não tivesse permissão para ler ou escrever na tabela admins, o login falhava.
+A Solução:
+
+Flexibilidade no Código: Alterei o arquivo src/config/database.js para que ele aceite tanto DB_TYPE quanto DB_DIALECT. Assim, o sistema se tornou mais "tolerante" a erros de configuração.
+Melhoria nos Logs: Alterei o authController.js para que, em caso de erro, ele registre a mensagem técnica real no servidor. Isso permitiu que você visse que o problema era na conexão ou na sessão.
+Instrução de Modo de Desenvolvimento: Adicionei a dica de usar o "Application Mode: Development" no cPanel caso o SSL ainda não esteja ativo. No modo desenvolvimento, o sistema permite logins via HTTP simples, facilitando o acesso inicial.
+Resumo:
+
+O primeiro erro era um bloqueio de segurança do servidor (Escrita de pastas).
+O segundo era uma falha de comunicação com o banco/sessão (Configuração e Protocolo).

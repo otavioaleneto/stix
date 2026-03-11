@@ -1,0 +1,163 @@
+ao abrir hdd1:
+Request URL
+http://192.168.2.103:9999/filebrowser?path=Hdd1%3A%5C
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+192.168.2.103:9999
+Referrer Policy
+strict-origin-when-cross-origin
+content-type
+application/json
+date
+Sun, 08 Mar 2026 14:20:03 GMT
+transfer-encoding
+chunked
+x-security-enabled
+1
+accept
+*/*
+accept-encoding
+gzip, deflate
+accept-language
+pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6,es;q=0.5
+authorization
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzMwMjI1NDksIml0YSI6MTc3Mjk3OTM0OSwiaXNzIjoicGhvZW5peCIsInVzZXIiOiJ4Ym94aHR0cCJ9.FgdghjM8zbaTYURjZGfyoppxOuL1JXiIQ3UALQCLoH4=
+connection
+keep-alive
+host
+192.168.2.103:9999
+referer
+http://192.168.2.103:9999/
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+x-kl-ajax-request
+Ajax_Request
+
+não aparece nada dentro da pasta, importante: os jogos estão na pasta hdd1.
+ao acessar: game aurora
+Request URL
+http://192.168.2.103:9999/filebrowser?path=Game%3A%5C
+Request Method
+GET
+Status Code
+200 OK
+Remote Address
+192.168.2.103:9999
+Referrer Policy
+strict-origin-when-cross-origin
+content-type
+application/json
+date
+Sun, 08 Mar 2026 14:21:59 GMT
+transfer-encoding
+chunked
+x-security-enabled
+1
+accept
+*/*
+accept-encoding
+gzip, deflate
+accept-language
+pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6,es;q=0.5
+authorization
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzMwMjI1NDksIml0YSI6MTc3Mjk3OTM0OSwiaXNzIjoicGhvZW5peCIsInVzZXIiOiJ4Ym94aHR0cCJ9.FgdghjM8zbaTYURjZGfyoppxOuL1JXiIQ3UALQCLoH4=
+connection
+keep-alive
+host
+192.168.2.103:9999
+referer
+http://192.168.2.103:9999/
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+x-kl-ajax-request
+Ajax_Request
+
+Aparece os arquivos, porem só visualiza e baixa. 
+
+erro ao tentar excluir:
+Request URL
+http://192.168.2.103:9999/filebrowser?path=Game%3A%5CMenuSystem.lua
+Request Method
+DELETE
+Status Code
+404 Not Found
+Remote Address
+192.168.2.103:9999
+Referrer Policy
+strict-origin-when-cross-origin
+content-length
+108
+content-type
+text/html
+date
+Sun, 08 Mar 2026 14:22:32 GMT
+x-security-enabled
+1
+accept
+*/*
+accept-encoding
+gzip, deflate
+accept-language
+pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6,es;q=0.5
+authorization
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzMwMjI1NDksIml0YSI6MTc3Mjk3OTM0OSwiaXNzIjoicGhvZW5peCIsInVzZXIiOiJ4Ym94aHR0cCJ9.FgdghjM8zbaTYURjZGfyoppxOuL1JXiIQ3UALQCLoH4=
+connection
+keep-alive
+host
+192.168.2.103:9999
+origin
+http://192.168.2.103:9999
+referer
+http://192.168.2.103:9999/
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+x-kl-ajax-request
+Ajax_Request
+
+erro ao upar:
+Request URL
+http://192.168.2.103:9999/filebrowser?path=Game%3A%5CMenuSystem1.lua
+Request Method
+POST
+Status Code
+404 Not Found
+Remote Address
+192.168.2.103:9999
+Referrer Policy
+strict-origin-when-cross-origin
+content-length
+108
+content-type
+text/html
+date
+Sun, 08 Mar 2026 14:22:56 GMT
+x-security-enabled
+1
+accept
+*/*
+accept-encoding
+gzip, deflate
+accept-language
+pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7,de;q=0.6,es;q=0.5
+authorization
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzMwMjI1NDksIml0YSI6MTc3Mjk3OTM0OSwiaXNzIjoicGhvZW5peCIsInVzZXIiOiJ4Ym94aHR0cCJ9.FgdghjM8zbaTYURjZGfyoppxOuL1JXiIQ3UALQCLoH4=
+connection
+keep-alive
+content-length
+259
+content-type
+multipart/form-data; boundary=----WebKitFormBoundaryMKxIgOYubrMh6xgn
+host
+192.168.2.103:9999
+origin
+http://192.168.2.103:9999
+referer
+http://192.168.2.103:9999/
+user-agent
+Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36
+x-kl-ajax-request
+Ajax_Request
+

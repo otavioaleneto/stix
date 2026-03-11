@@ -1,0 +1,171 @@
+
+Ubuntu Server 18.04 LTS
+Ubuntu-Server-18.04-x64
+Sistema Operacional
+
+CentOS 7
+CentOS-7-x64
+Sistema Operacional
+
+Cyber Panel Hosting
+CentOS-7-x64
+Sistema Operacional
+
+Hestia CP Hosting
+CentOS-7-x64
+Sistema Operacional
+
+aaPanel Hosting
+Ubuntu-Server-22.04-x64
+Sistema Operacional
+
+Ubuntu Server 20.04 LTS
+Ubuntu-Server-20.04-x64
+Sistema Operacional
+
+Ubuntu Server 22.04 LTS
+Ubuntu-Server-22.04-x64
+Sistema Operacional
+
+Debian 10 Buster
+Debian-10-Buster
+Sistema Operacional
+
+MariaDB 10.3 (MySQL 5.7)
+MySQL
+Banco de Dados
+
+PostgreSQL
+PostgreSQL
+Banco de Dados
+
+Wordpress
+Wordpress
+CMS
+
+3CX
+3CX
+Aplicação
+
+FreePBX
+FreePBX
+Aplicação
+
+cPanel & WHM TRIAL
+cPanel-WHM
+Aplicação
+
+PfSense 2.7
+pfsense-2-7
+Aplicação
+
+MK-Auth
+mkauth
+Aplicação
+
+Debian 11 Bullseye
+Debian-11-Bullseye
+Sistema Operacional
+
+Portainer.io (Kubernetes, Docker, Swarm and Nomad)
+Portainer
+Aplicação
+
+Asp.net Core on Nginx
+Asp-net-core-nginx
+Servidor Web
+
+Alma Linux 9
+Alma-Linux-9
+Sistema Operacional
+
+Cloud Linux 8
+Cloud-Linux-8
+Sistema Operacional
+
+Rocky Linux 8
+Rocky-Linux-8
+Sistema Operacional
+
+Oracle Linux 8
+Oracle-Linux-8
+Sistema Operacional
+
+Issabel 4
+Issabel
+Aplicação
+
+Issabel 5
+Issabel
+Aplicação
+
+Ubuntu Server 24
+Ubuntu-Server-24
+Sistema Operacional
+
+Debian 12
+Debian-12
+Sistema Operacional
+
+Yeastar P-Series Software PBX
+Yeastar-P-Series-Software-PBX
+Aplicação
+
+CentOS Stream 9
+Centos-Stream-9
+Sistema Operacional
+
+Zabbix 7.2 LTS
+Zabbix-7-LTS
+Aplicação
+
+Zentyal 8.0 Development
+Zentyal-8-development
+Aplicação
+
+Erix PABX IP
+Erix-Pabx-IP
+Aplicação
+
+Mikrotik RouterOS 7
+mikrotik-routeros-7
+Aplicação
+
+Debian 13
+Debian 13 x64
+Sistema Operacional
+
+Ubuntu Server 25
+Ubuntu Server 25 x64
+Sistema Operacional
+
+N8n
+N8n
+Aplicação
+
+Nextcloud
+Nextcloud
+Aplicação
+
+FreeBSD 13
+FreeBSD-13
+Sistema Operacional
+
+FreeBSD 14
+FreeBSD-14
+Sistema Operacional
+
+FreeBSD 15
+FreeBSD-15
+Sistema Operacional
+
+GitLab
+GitLab
+Aplicação
+
+MongoDB
+MongoDB
+Banco de Dados
+
+Redis
+Redis
